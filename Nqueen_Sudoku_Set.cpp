@@ -377,9 +377,172 @@ int nqueen_02(int m, int n, int qpsf, int idx, string asf){
     return count;
 }
 
+int row_ = 0;
+int col_ = 0;
+int diag_ = 0;
+int adiag_ = 0;
+
+int nqueen_03(int n, int m, int idx, int qpsf, string asf){
+
+    if(qpsf == n){
+        cout<<asf<<endl;
+        return 1;
+    }
+    int count = 0;
+    for(int i=idx; i< m*n; i++){
+
+        int r = i/m;
+        int c = i%m;
+
+        int xmask = (1<<r);
+        int ymask = (1<<c);
+        int dmask = (1<<r-c+m-1);
+        int admask = (1<<r+c);
+
+        if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask)){
+
+            row_ ^= xmask;
+            col_ ^= ymask;
+            diag_ ^= dmask;
+            adiag_ ^= admask;
+
+            count += nqueen_03(n,m,i+1,qpsf+1, asf + "(" + to_string(r) + "," + to_string(c) + ")");
+
+            row_ ^= xmask;
+            col_ ^= ymask;
+            diag_ ^= dmask;
+            adiag_ ^= admask;
+        }
+    }
+
+    return count;
+}
+
+int nqueen_03_subseq(int n, int m, int idx, int qpsf, string asf){
+
+    if(idx == m*n || qpsf == n){
+        if(qpsf == n){
+            cout<<asf<<endl;
+            return 1;
+        }
+        return 0;
+    }
+    int count = 0;
+  
+    int r = idx/m;
+    int c = idx%m;
+
+    int xmask = (1<<r);
+    int ymask = (1<<c);
+    int dmask = (1<<r-c+m-1);
+    int admask = (1<<r+c);
+
+    if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask)){
+
+        row_ ^= xmask;
+        col_ ^= ymask;
+        diag_ ^= dmask;
+        adiag_ ^= admask;
+
+        count += nqueen_03_subseq(n,m,idx+1,qpsf+1, asf + "(" + to_string(r) + "," + to_string(c) + ")");
+
+        row_ ^= xmask;
+        col_ ^= ymask;
+        diag_ ^= dmask;
+        adiag_ ^= admask;
+    }
+
+    count+= nqueen_03_subseq(n,m,idx+1,qpsf, asf);
+
+    return count;
+}
+
+// arrangments a jayenge queens ke place krne ke .
+int nqueen_03_subseq_permute(int n, int m, int idx, int qpsf, string asf, vector<vector<bool>>& vis){
+
+    if(idx == m*n || qpsf == n){
+        if(qpsf == n){
+            cout<<asf<<endl;
+            return 1;
+        }
+        return 0;
+    }
+    int count = 0;
+  
+    int r = idx/m;
+    int c = idx%m;
+
+    int xmask = (1<<r);
+    int ymask = (1<<c);
+    int dmask = (1<<r-c+m-1);
+    int admask = (1<<r+c);
+
+    if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask) && !vis[r][c]){
+
+        row_ ^= xmask;
+        col_ ^= ymask;
+        diag_ ^= dmask;
+        adiag_ ^= admask;
+        vis[r][c] = true;
+
+        count += nqueen_03_subseq_permute(n,m,0,qpsf+1, asf + "(" + to_string(r) + "," + to_string(c) + ")", vis);
+
+        vis[r][c] = false;
+        row_ ^= xmask;
+        col_ ^= ymask;
+        diag_ ^= dmask;
+        adiag_ ^= admask;
+    }
+
+    count+= nqueen_03_subseq_permute(n,m,idx+1,qpsf, asf, vis);
+
+    return count;
+}
+
+int nqueen_04(int n, int m, int r, int tnq, string asf){
+
+    if(r == n || tnq == 0){
+        if(tnq == 0){
+            cout<<asf<<endl;
+        }
+    }
+    int count = 0;
+    for(int i = 0; i<n; i++){
+        for(int j=0; j< m; j++){
+
+        int row = r;
+        int col = j;
+
+        int xmask = (1<<row);
+        int ymask = (1<<col);
+        int dmask = (1<<row-col+m-1);
+        int admask = (1<<row+col);
+
+        if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask)){
+
+            row_ ^= xmask;
+            col_ ^= ymask;
+            diag_ ^= dmask;
+            adiag_ ^= admask;
+
+            count += nqueen_04(n,m,r+1,tnq-1, asf + "(" + to_string(row) + "," + to_string(col) + ")");
+
+            row_ ^= xmask;
+            col_ ^= ymask;
+            diag_ ^= dmask;
+            adiag_ ^= admask;
+        }
+
+    }
+    }
+    
+    return count;
+}
+
 void nqueens(){
     int n =4, m=4;
     vector<vector<bool>> board(n, vector<bool>(m, false));
+    vector<vector<bool>> vis(n, vector<bool>(m, false));
     rowA.resize(n,false);
     colA.resize(n,false);
     diag.resize(n+m-1,false);
@@ -387,7 +550,9 @@ void nqueens(){
 
     // cout<<nqueen_01(board, 0, 0, "")<<endl;
     //cout<<nqueen_01_subseq(board, 0, 0, "")<<endl;
-    cout<<nqueen_02(m,n,0,0,"")<<endl;
+    //cout<<nqueen_02(m,n,0,0,"")<<endl;
+    cout<<nqueen_03_subseq_permute(m,n,0,0,"",vis)<<endl;
+
 
 
 }
