@@ -510,34 +510,36 @@ int nqueen_04(int n, int m, int r, int tnq, string asf){
     for(int i = 0; i<n; i++){
         for(int j=0; j< m; j++){
 
-        int row = r;
-        int col = j;
+            int row = r;
+            int col = j;
 
-        int xmask = (1<<row);
-        int ymask = (1<<col);
-        int dmask = (1<<row-col+m-1);
-        int admask = (1<<row+col);
+            int xmask = (1<<row);
+            int ymask = (1<<col);
+            int dmask = (1<<row-col+m-1);
+            int admask = (1<<row+col);
 
-        if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask)){
+            if(!(row_ & xmask) && !(col_ & ymask) && !(diag_ & dmask) && !(adiag_ & admask)){
 
-            row_ ^= xmask;
-            col_ ^= ymask;
-            diag_ ^= dmask;
-            adiag_ ^= admask;
+                row_ ^= xmask;
+                col_ ^= ymask;
+                diag_ ^= dmask;
+                adiag_ ^= admask;
 
-            count += nqueen_04(n,m,r+1,tnq-1, asf + "(" + to_string(row) + "," + to_string(col) + ")");
+                count += nqueen_04(n,m,r+1,tnq-1, asf + "(" + to_string(row) + "," + to_string(col) + ")");
 
-            row_ ^= xmask;
-            col_ ^= ymask;
-            diag_ ^= dmask;
-            adiag_ ^= admask;
+                row_ ^= xmask;
+                col_ ^= ymask;
+                diag_ ^= dmask;
+                adiag_ ^= admask;
+            }
+
         }
-
-    }
     }
     
     return count;
 }
+
+
 
 void nqueens(){
     int n =4, m=4;
@@ -552,8 +554,6 @@ void nqueens(){
     //cout<<nqueen_01_subseq(board, 0, 0, "")<<endl;
     //cout<<nqueen_02(m,n,0,0,"")<<endl;
     cout<<nqueen_03_subseq_permute(m,n,0,0,"",vis)<<endl;
-
-
 
 }
 
