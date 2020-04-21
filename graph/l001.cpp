@@ -272,6 +272,8 @@ int getcomponents(){
     //cout<<maxsize<<endl;
     return count;
 }
+
+//
 bool isValid(int sr, int sc ,vector<vector<int>>& board){
     if(sr<0 || sc<0 || sc>=board[0].size() || sr>=board.size() || board[sr][sc] ==2 || board[sr][sc] == 0){
             return false;
@@ -283,6 +285,7 @@ vector<vector<int>> dir = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
 void dfs_maxArea(int r, int c , vector<vector<int>>& board){
 
     board[r][c] = 2;
+
     for(int d = 0; d<dir.size(); d++){
         int row = r + dir[d][0];
         int col = c + dir[d][1];
