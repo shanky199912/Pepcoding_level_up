@@ -9,7 +9,7 @@ class l001{
         constructgraph();
     }
 
-    class Edge{
+    static class Edge{
         int v = 0;
         int w = 0;
 
@@ -40,7 +40,118 @@ class l001{
         System.out.println();
     }
 
-    
+    public static int findEdge(int v1, int v2){
+
+        int vtx = -1;
+        for(int i=0; i<graph[v1].size(); i++){
+
+            Edge e = graph[v1].get(i);
+            if(e.v == v2){
+                vtx = i;
+                break;
+            }
+        }
+
+        return vtx;
+    }
+
+    public static void removeEdge(int u, int v){
+
+        int idx = findEdge(u, v);
+        int idx2 = findEdge(v, u);
+
+        graph[u].remove(idx);
+        graph[v].remove(idx2);
+    }
+
+    public static void removeVtx(int vtx){
+
+        while(graph[vtx].size()!=0){
+
+            Edge e = graph[vtx].get(graph[vtx].size()-1);
+            removeEdge(vtx, e.v);
+        }
+    }
+
+    public static boolean hasPath(int src, int dest, boolean[] vis){
+
+        if(src == dest) return true;
+
+        vis[src] = true;
+        boolean ans = false;
+        for(Edge e: graph[src]){
+            if(!vis[e.v]){
+                ans = ans || hasPath(e.v, dest, vis);
+            }
+        }
+        return ans;
+    }
+
+    public static int printPath(int src, int dest, int w, boolean[] vis, String ans){
+
+        if(src == dest){
+            System.out.println(ans + src + "@" + w);
+            return 1;
+        }
+
+        vis[src] = true;
+        int count = 0;
+        for(Edge e: graph[src]){
+            if(!vis[e.v]){
+                count += printPath(e.v, dest, w + e.w, vis, ans + src + " ");
+            }
+        }
+        vis[src] = false;
+        return count;
+    }
+
+    static class Pair{
+        int largeW = 0;
+        String lps = "";
+        int smallW = (int)1e7;
+        String sps = "";
+        int ciel = (int)1e7;
+        String cps = "";
+        int floor = 0;
+        String fps = "";
+    }
+
+    public static void allSolution(int src, int dest, int w, boolean[] vis, String ans, Pair pair, int K){
+
+        if(src == dest){
+            // System.out.println(ans + src + "@" + w);
+            //largest path
+            if(w > pair.largeW){
+                pair.largeW = w;
+                pair.lps = ans + src;
+            }
+            // smallest path.
+            if(w < pair.smallW){
+                pair.smallW = w; 
+                pair.sps = ans + src;
+            }            
+            //ciel path -> largest valon me se sabse chota.
+            if(w > K && w < pair.ciel){
+                pair.ciel = w;
+                pair.cps = ans + src;
+            }
+            // floor path -> smallest valon me se sabse bda.
+            if(w < K && w > pair.floor){
+                pair.floor = w;
+                pair.fps = ans + src;
+            }
+            return ;
+        }
+
+        vis[src] = true;
+        for(Edge e: graph[src]){
+            if(!vis[e.v]){
+                allSolution(e.v, dest, w + e.w, vis, ans + src + " ",pair,K);
+            }
+        }
+        vis[src] = false;
+        return ;
+    }    
 
     public static void constructgraph(){
 
@@ -48,5 +159,33 @@ class l001{
         for(int i=0; i<N; i++){
             graph[i] = new ArrayList<Edge>();
         }
+
+        addEdge(graph, 0, 1, 10);
+        addEdge(graph, 1, 2, 10);
+        addEdge(graph, 2, 3, 40);
+        addEdge(graph, 0, 3, 10);
+        addEdge(graph, 3, 4, 2);
+        addEdge(graph, 4, 5, 6);
+        addEdge(graph, 4, 6, 8);
+        addEdge(graph, 5, 6, 3);
+
+        display(graph);
+
+        // removeEdge(3, 4);
+        // display(graph);
+
+        // removeVtx(3);
+        // display(graph);
+
+        boolean[] vis = new boolean[N];
+        // System.out.println(hasPath(0, 6, vis));
+        System.out.println(printPath(0,6,0, vis,""));
+        System.out.println("---------------------");
+        Pair pair = new Pair();
+        allSolution(0,6,0, vis,"",pair,20);
+        System.out.println("Largest-:"+pair.lps+"@"+pair.largeW);
+        System.out.println("smallest-:"+pair.sps+"@"+pair.smallW);
+        System.out.println("ciel path-:"+pair.cps+"@"+pair.ciel);
+        System.out.println("floor path-:"+pair.fps+"@"+pair.floor);
     }
 }

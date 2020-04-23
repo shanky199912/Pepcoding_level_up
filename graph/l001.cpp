@@ -186,67 +186,6 @@ int hamiltonianPath(int src, int osrc, vector<bool>& vis, int count, string ans)
     return cnt;
 }
 
-//leetcode -130;
-void surroundregions_dfs(int r, int c, int n, int m, vector<vector<char>>& board){
-
-    if(board[r][c] != 'O') return;
-
-    //mark
-    board[r][c] = '#';
-    if(r-1>=0){
-        surroundregions_dfs(r-1,c,n,m, board);
-    }
-    if(c-1>=0){
-        surroundregions_dfs(r,c-1,n,m, board);
-    }
-    if(r+1<n){
-        surroundregions_dfs(r+1,c,n,m, board);
-    }
-    if(c+1<m){
-        surroundregions_dfs(r,c+1,n,m, board);
-    }
-}
-
-void solve(vector<vector<char>>& board){
-
-    if(board.size() == 0) return;
-
-    int n = board.size();
-    int m = board[0].size();
-
-    for(int i=0; i<n; i++){
-        if(board[i][0] == 'O'){
-            surroundregions_dfs(i, 0, n, m ,board);
-        }
-
-        if(board[i][m-1] == '0'){
-            surroundregions_dfs(i, m-1, n, m, board);
-        }
-    }
-
-    
-    for(int i=0; i<m; i++){
-        if(board[0][i] == 'O'){
-            surroundregions_dfs(0, i, n, m ,board);
-        }
-
-        if(board[n-1][0] == '0'){
-            surroundregions_dfs(n-1, i, n, m, board);
-        }
-    }
-
-    for(int i=0; i<n; i++){
-        for(int j=0; j<m; j++){
-            if(board[i][j] == '#'){
-                board[i][j] = 'O';
-            }
-            else if(board[i][j] == 'O'){
-                board[i][j] = 'X';
-            }
-        }
-    }
-}
-
 int dfs_components(int src , vector<bool> &vis){
     int count = 0;
     vis[src] = true;
@@ -270,45 +209,6 @@ int getcomponents(){
         }
     }
     //cout<<maxsize<<endl;
-    return count;
-}
-
-//
-bool isValid(int sr, int sc ,vector<vector<int>>& board){
-    if(sr<0 || sc<0 || sc>=board[0].size() || sr>=board.size() || board[sr][sc] ==2 || board[sr][sc] == 0){
-            return false;
-    }
-    return true;
-}
-
-vector<vector<int>> dir = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
-void dfs_maxArea(int r, int c , vector<vector<int>>& board){
-
-    board[r][c] = 2;
-
-    for(int d = 0; d<dir.size(); d++){
-        int row = r + dir[d][0];
-        int col = c + dir[d][1];
-
-        if(isValid(row,col,board)){
-            dfs_maxArea(row,col,board);
-        }
-    }
-
-}
-
-int maxArea(vector<vector<int>>& board){
-
-    int count = 0;
-    for(int i=0; i<board.size(); i++){
-        for(int j=0; j<board[0].size();j++){
-            if(board[i][j] == 1){
-                count++;
-                dfs_maxArea(i,j,board);
-            }
-        }
-    }
-
     return count;
 }
 
