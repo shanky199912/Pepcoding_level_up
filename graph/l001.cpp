@@ -1,5 +1,6 @@
 #include<iostream>
 #include<vector>
+#include<queue>
 
 using namespace std;
 
@@ -211,6 +212,40 @@ int getcomponents(){
     //cout<<maxsize<<endl;
     return count;
 }
+
+void BFS_04(int src, vector<bool>& vis){
+
+    queue<int> que;
+    que.push(src);
+    vis[src] = true;
+
+    int level = 0;
+    int cycle = 0;
+    int dest = 6;
+
+    while(que.size()!=0){
+        int size = que.size();
+
+        while(size-->0){
+            int rvtx = que.front();
+            que.pop();
+
+            if(rvtx == dest){
+                cout<<"dest:"<<level<<endl;
+            }
+
+            for(Edge* e: graph[rvtx]){
+                if(!vis[e->v]){
+                    que.push(e->v);
+                    vis[e->v] = true;
+                }
+            }
+
+        }
+        level++;
+    }
+}
+
 
 void contsructgraph(){
 

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 class l001{
     public static void main(String[] args){
@@ -105,16 +106,16 @@ class l001{
         return count;
     }
 
-    static class Pair{
-        int largeW = 0;
-        String lps = "";
-        int smallW = (int)1e7;
-        String sps = "";
-        int ciel = (int)1e7;
-        String cps = "";
-        int floor = 0;
-        String fps = "";
-    }
+    // static class Pair{
+    //     int largeW = 0;
+    //     String lps = "";
+    //     int smallW = (int)1e7;
+    //     String sps = "";
+    //     int ciel = (int)1e7;
+    //     String cps = "";
+    //     int floor = 0;
+    //     String fps = "";
+    // }
 
     public static void allSolution(int src, int dest, int w, boolean[] vis, String ans, Pair pair, int K){
 
@@ -151,7 +152,139 @@ class l001{
         }
         vis[src] = false;
         return ;
-    }    
+    }
+
+    static string calldfs(int r, int c, int n, int m,int[][] board){
+
+        if(board[r][c]!=1) return "";
+
+        board[r][c] = 2;
+        String s = "";
+        if(r-1>=0){
+            s = s +"t";
+            s = s + calldfs(r-1,c,n,m, board);
+            s = s +"t";
+        }
+        if(c-1>=0){
+            s = s +"l";
+            s += calldfs(r,c-1,n,m,str+"l", board);
+        }
+        if(r+1<n){
+            s = s +"d";
+            s +=calldfs(r+1,c,n,m,str+"d", board);
+        }
+        if(c+1<m){
+            s = s +"r";
+            s += calldfs(r,c+1,n,m,str+"r", board);
+        }
+
+        return s;
+    }
+    
+    static void distinctIslands(int[][] board){
+
+        int n = board.length;
+        int m = board[0].length;
+
+        ArrayList<String> list = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            for(int j = 0; j<m; j++){
+
+                if(board[i][j] == 1){
+
+                    String str = calldfs(i, j,n,m, "",board);
+                    
+                    for(String rr: list){
+                        if(!list.contains(str))
+                            list.add(str);
+                    }
+                }
+            }
+        }
+    }
+
+    static class Pair{
+        int vtx;
+        String  psf;
+        int level;
+
+        Pair(int vtx, String psf){
+            this.vtx = vtx;
+            this.psf = psf;
+        }
+
+        Pair(int vtx, String psf, int level){
+            this.vtx = vtx;
+            this.psf = psf;
+            this.level = level;
+        }
+    }
+
+    static void BSF_02(int src, boolean[] vis){
+
+        LinkedList<Pair> que = new LinkedList<>();
+        que.addLast(new Pair(src, src+" "));
+        que.addLast(null);
+
+        int dest = 6;
+        int level = 0;
+        while(que.size()!=0){
+            Pair rvtx = que.removeFirst();
+
+            if(vis[rvtx.vtx]){
+                System.out.println("Cycle: "+ rvtx.psf);
+                continue;
+            }
+
+            if(rvtx.vtx == dest){
+                System.out.println("destination: " + rvtx.psf + "->" + level);
+            }
+
+            vis[rvtx.vtx] = true;
+
+            for(Edge e: graph[rvtx.vtx]){
+                if(!vis[rvtx.vtx])
+                    que.addLast(new Pair(e.v, rvtx.psf + e.v));
+            }
+
+            if(que.getFirst() == null){
+                level++;
+                que.removeFirst();
+                que.addLast(null);
+            }
+
+        }
+    }
+
+    static void BSF_03(int src, boolean[] vis){
+
+        LinkedList<Pair> que = new LinkedList<>();
+        que.addLast(new Pair(src, src+" "));
+        que.addLast(null);
+
+        int dest = 6;
+        
+        while(que.size()!=0){
+            Pair rvtx = que.removeFirst();
+
+            if(vis[rvtx.vtx]){
+                System.out.println("Cycle: "+ rvtx.psf);
+                continue;
+            }
+
+            if(rvtx.vtx == dest){
+                System.out.println("destination: " + rvtx.psf + "->" + rvtx.level);
+            }
+
+            vis[rvtx.vtx] = true;
+
+            for(Edge e: graph[rvtx.vtx]){
+                if(!vis[rvtx.vtx])
+                    que.addLast(new Pair(e.v, rvtx.psf + e.v, rvtx.level+1));
+            }
+
+        }
+    }
 
     public static void constructgraph(){
 

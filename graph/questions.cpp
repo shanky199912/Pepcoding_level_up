@@ -206,6 +206,162 @@ int islandPerimeter(vector<vector<int>>& board){
     return (4 * count_ones - 2 * count_regions);
 }
 
+//leetcode -1091
+int shortestPathBinaryMatrix(vector<vector<int>>& board) {
+    int n = board.size();
+    int m = board[0].size();
+
+    if (n == 0)
+        return -1;
+    
+    if (m == 0)
+        return -1;
+
+    if (board[0][0] == 1 || board[n - 1][m - 1] == 1)
+        return -1;
+    
+    queue<int> que;
+    int dirA[8][2] = {{-1, -1}, {-1, 0}, {0, -1}, {-1, 1}, {1, -1}, {0, 1}, {1, 0}, {1, 1}};
+    que.push(0);
+    board[0][0] = 1;
+
+    int level = 1;
+    while(que.size()!=0){
+
+        int size = que.size();
+
+        while(size-- >0){
+
+            int rvtx = que.front();
+            que.pop();
+
+            int r = rvtx/m;
+            int c = rvtx%m;
+
+            for(int d=0; d<8; d++){
+                int x = r + dirA[d][0];
+                int y = c + dirA[d][1];
+
+                if (r == n - 1 && c == m - 1)
+                    return level;
+
+                if (x >= 0 && x < n && y >= 0 && y < m && board[x][y] == 0)
+                {
+                    que.push((x * m + y));
+                    board[x][y] = 1;
+                }
+            }
+        }
+        level++;
+    } 
+
+    return -1;
+}
+
+int wallsandgate(vector<vector<int>>& board){
+
+    int n = board.size();
+    int m = board[0].size();
+
+    if (n == 0)
+        return -1;
+    
+    if (m == 0)
+        return -1;
+
+    if (board[0][0] == 1 || board[n - 1][m - 1] == 1)
+        return -1;
+    
+    queue<int> que;
+    int dirA[8][2] = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+    
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            if (board[i][j] == 0)
+                que.push((i * m + j));
+
+    int level = 1;
+    while(que.size()!=0){
+
+        int size = que.size();
+
+        while(size-- >0){
+
+            int rvtx = que.front();
+            que.pop();
+
+            int r = rvtx/m;
+            int c = rvtx%m;
+
+            for(int d=0; d<4; d++){
+                int x = r + dirA[d][0];
+                int y = c + dirA[d][1];
+
+                if (x >= 0 && x < n && y >= 0 && y < m && board[x][y] == 2147483647)
+                {
+                    que.push((x * m + y));
+                    board[x][y] = level;
+                }
+            }
+        }
+        level++;
+    } 
+
+    return -1;
+}
+
+int orangesRotting(vector<vector<int>> &board) {
+    
+    int n = board.size();
+    int m = board[0].size();
+
+    if (board.size() == 0 || board[0].size() == 0)
+        return-1;
+        
+        queue<int> que;
+        int dirA[8][2] = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}};
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (board[i][j] == 2)
+                    que.push((i * m + j));
+
+        int level = 0;
+        while(que.size()!=0){
+
+            int size = que.size();
+
+            while(size-- >0){
+
+                int rvtx = que.front();
+                que.pop();
+
+                int r = rvtx/m;
+                int c = rvtx%m;
+
+                for(int d=0; d<4; d++){
+                    int x = r + dirA[d][0];
+                    int y = c + dirA[d][1];
+
+                    if (x >= 0 && x < n && y >= 0 && y < m && board[x][y] == 1)
+                    {
+                        que.push((x * m + y));
+                        board[x][y] = 2;
+                    }
+                }
+            }
+            level++;
+        } 
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                if (board[i][j] == 1)
+                    return -1;
+
+
+    return (level==0)?0:level-1;
+}
+
 int main(){
 
 }
