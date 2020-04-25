@@ -220,39 +220,40 @@ class l001{
         }
     }
 
-    static void BSF_02(int src, boolean[] vis){
-
+    static void BFS_02(int src, boolean[] vis){
         LinkedList<Pair> que = new LinkedList<>();
-        que.addLast(new Pair(src, src+" "));
+        que.addLast(new Pair(src, ""));
         que.addLast(null);
 
+        int level =0;
         int dest = 6;
-        int level = 0;
+
         while(que.size()!=0){
+
             Pair rvtx = que.removeFirst();
 
             if(vis[rvtx.vtx]){
-                System.out.println("Cycle: "+ rvtx.psf);
-                continue;
+				System.out.println("Cycle: " + rvtx.psf);
+				continue;
+			}
+
+			if(rvtx.vtx==desti){
+				System.out.println("destinantion: " + rvtx.psf + " -> " + level);
+			}
+			
+			vis[rvtx.vtx]=true;
+
+            for(Edge e:graph[rvtx.vtx]){
+                if(!vis[e.v]){
+                    que.addLast(new Pair(e.v, rvtx.psf));
+                }
             }
 
-            if(rvtx.vtx == dest){
-                System.out.println("destination: " + rvtx.psf + "->" + level);
-            }
-
-            vis[rvtx.vtx] = true;
-
-            for(Edge e: graph[rvtx.vtx]){
-                if(!vis[rvtx.vtx])
-                    que.addLast(new Pair(e.v, rvtx.psf + e.v));
-            }
-
-            if(que.getFirst() == null){
-                level++;
-                que.removeFirst();
-                que.addLast(null);
-            }
-
+            if(que.getFirst()==null){
+				level++;
+				que.removeFirst();
+				que.addLast(null);
+			}
         }
     }
 

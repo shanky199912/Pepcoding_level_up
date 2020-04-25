@@ -213,11 +213,139 @@ int getcomponents(){
     return count;
 }
 
-void BFS_04(int src, vector<bool>& vis){
+string gscc_bfs(int src, vector<bool> &visited){
 
     queue<int> que;
     que.push(src);
-    vis[src] = true;
+    string comp ="";
+
+    while(que.size()!=0){
+        int rvtx = que.front(); que.pop();
+
+        if(visited[rvtx]){
+            continue;
+        }
+        visited[rvtx] = true;
+
+        comp += to_string(rvtx);
+        for(Edge* e: graph[rvtx]){
+            if(!visited[e->v]){
+                que.push(e->v);
+            }
+        }
+    }
+    return comp;
+}
+
+bool isConnected(){
+    vector<bool> visited(N,false);
+    int counter = 0;
+    for(int i=0; i<N; i++){
+        if(!visited[i]){
+            //string ans = gscc_bfs(i,visited);
+            int ans = dfs_components(i,visited);
+            counter++;
+
+            if(counter ==2)return false;
+        }
+    }
+    return true;
+}
+
+vector<string> gcc(){
+    vector<bool> visited(N,false);
+    vector<string> ans;
+    int counter = 0;
+    for(int i=0; i<N; i++){
+        if(!visited[i]){
+            string comp = gscc_bfs(i,visited);
+            ans.push_back(comp);
+        }
+    }
+    return ans;
+}
+
+bool isCyclic_bfs(int src, vector<bool>& vis){
+    queue<int> que;
+    que.push(src);
+    //bfs ka 5th method lagaya h -> cycle vala
+    while(que.size()!=0){
+        int size = que.size();
+
+        while(size-- >0){
+            int rvtx = que.front(); que.pop();
+            if(vis[rvtx]){
+                return true;
+            }
+            vis[rvtx] = true;
+            for(Edge* e: graph[rvtx])
+                if(!vis[e->v]) que.push(e->v);
+        }
+    }
+    return false;
+}
+bool isCyclic(){
+    vector<bool> vis(N,false);
+    bool ans = false;
+    for(int i=0; i<N; i++){
+        if(!vis[i]){
+            ans = ans || isCyclic_bfs(i, vis);
+        }
+    }
+    return ans;
+}
+//1st method where we use queue of type pair. pair stores two values int and string. 
+void BFS_01(int src, vector<bool> &vis){
+    queue<pair<int,string>> que;
+    que.push({src, to_string(src) + ""});
+
+    int dest = 6;
+
+    while(que.size()!=0){
+
+        pair<int,string> rvtx = que.front(); que.pop();
+
+        if(vis[rvtx.first]){ //cycle hai?
+            cout<<"Cycle: "<<rvtx.second<<endl;
+            continue;
+        }
+
+        if(rvtx.first == dest){
+            cout<<"destination: "<<rvtx.second<<endl;
+        }
+
+        vis[rvtx.first] = true;
+
+        for(Edge* e: graph[rvtx.first]){
+
+            if(!vis[e->v]){
+                que.push({e->v, rvtx.second + to_string(e->v)});
+            }
+        }
+    }
+}
+
+//2nd method where we make a pair class instead of using pair (usually c++ has pair but java doesnt, so make pair class in java)
+void BFS_02(){
+    //In java
+    // delemeter vala h jisme null dalte h queue me 
+    // aur jahan null hota h vahan pe level ka count bda lete.
+}
+
+void BFS_03(){
+    //In java
+    // delemeter vala h jisme null dalte h queue me 
+    // yahan pair class me ek level name ka variable rkh lete aur usse bda lete jab bhi null mile.
+}
+
+void BFS_04(){
+ // 2 QUEUE USE KRNE VALA METHOD.
+}
+
+void BFS_05(int src, vector<bool> &vis){
+
+    queue<int> que;
+    que.push(src);
 
     int level = 0;
     int cycle = 0;
@@ -226,16 +354,56 @@ void BFS_04(int src, vector<bool>& vis){
     while(que.size()!=0){
         int size = que.size();
 
-        while(size-->0){
-            int rvtx = que.front();
-            que.pop();
+        while(size-- >0){
+            int rvtx = que.front(); que.pop();
+
+            if(vis[rvtx]){ //cycle
+                cout << "Cycle No. " + to_string(cycle) + ": " << rvtx << endl;
+                cycle++;
+                continue;
+            }
 
             if(rvtx == dest){
                 cout<<"dest:"<<level<<endl;
             }
 
+            vis[rvtx] = true;
             for(Edge* e: graph[rvtx]){
+
                 if(!vis[e->v]){
+                    que.push(e->v);
+                }
+            }
+
+        }
+        level++;
+    }
+}
+
+void BFS_06(int src, vector<bool> &vis){
+
+    queue<int> que;
+    que.push(src);
+    vis[src] = true;
+
+    int level = 0;
+    int dest = 6;
+
+    while(que.size() != 0){
+        int size = que.size();
+
+        while(size-- >0){
+            int rvtx = que.front();
+            que.pop();
+
+            if(rvtx == dest){
+                cout << "dest:" << level << endl;
+            }
+
+            for(Edge* e: graph[rvtx]){
+                
+                if(!vis[e->v]){
+
                     que.push(e->v);
                     vis[e->v] = true;
                 }
@@ -246,6 +414,44 @@ void BFS_04(int src, vector<bool>& vis){
     }
 }
 
+bool isBipartiteBfs(int src, vector<int> &vis){
+
+    queue<pair<int,int>> que; //int -> src, int-> color(0,1,-1)
+    que.push({src, 0});
+
+    int cycle = 0;
+
+    while(que.size()!=0){
+        int size = que.size();
+        while (size-- > 0)
+        {
+            pair<int, int> rvtx = que.front();
+            que.pop();
+
+            if (vis[rvtx.first] != -1) // already visited(cycle).
+            {   cycle++;
+                if (vis[rvtx.first] != rvtx.second) // check for conflict.
+                    return false;
+            }
+
+            vis[rvtx.first] = rvtx.second;
+            for (Edge* e : graph[rvtx.first])
+            {
+                if (vis[e->v] == -1)
+                    que.push({e->v, (rvtx.second + 1) % 2}); 
+            }
+        }
+    }
+}
+void isBipartite(){
+
+    vector<int> vis(N,-1); // -1 ->unvisited 0 ->red 1 -> green
+    for(int i=0; i<N; i++){
+        if(vis[i]==-1){
+            cout<<isBipartiteBfs(i,vis)<<endl;
+        }
+    }
+}
 
 void contsructgraph(){
 
@@ -253,7 +459,7 @@ void contsructgraph(){
     addEdge(graph,1,2,10);
     addEdge(graph,0,3,10);
     addEdge(graph,2,3,40);
-    // addEdge(graph,3,4,2);
+    addEdge(graph,3,4,2);
     addEdge(graph,4,5,2);
     addEdge(graph,5,6,8);
     addEdge(graph,4,6,3);
@@ -270,9 +476,9 @@ void questions(){
     vector<bool> vis(N,false);
     //cout<<hasPath(0,6,vis)<<endl;
     //cout<<"--------"<<endl;
-    cout<<printPath(0,6,0,vis,"")<<endl;
-    cout<<"--------"<<endl;
-    AllsolutionPair pair;
+    //cout<<printPath(0,6,0,vis,"")<<endl;
+    // cout<<"--------"<<endl;
+    // AllsolutionPair pair;
     // cout<<allSolution(0,6,0,vis,"",pair,20)<<endl;
     // cout<<"Largest-:"<<pair.lps<<"@"<<pair.heavyW<<endl;
     // cout<<"smallest-:"<<pair.sps<<"@"<<pair.lightW<<endl;
@@ -280,8 +486,17 @@ void questions(){
     // cout<<"floor path-:"<<pair.fps<<"@"<<pair.floor<<endl;
 
     //cout<<hamiltonianPath(2,2,vis,0,"")<<endl;
-    cout<<getcomponents()<<endl;
-
+    //cout<<getcomponents()<<endl;
+    
+    // BFS_05(0,vis);
+    // BFS_04(0, vis);
+    // cout<<(boolalpha)<<isConnected()<<endl;
+    // vector<string> ans = gcc();
+    // for(string val: ans){
+    //     cout<<val<<" ";
+    // }
+    // cout<<endl;
+    cout<<(boolalpha)<<isCyclic()<<endl;
 }
 
 int main(){
