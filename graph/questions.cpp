@@ -363,6 +363,48 @@ int orangesRotting(vector<vector<int>> &board) {
     return (level==0)?0:level-1;
 }
 
+//leetcode -815-bus routes=========================================
+
+int numBusesToDestination(vector<vector<int>>& routes, int S, int T) {
+
+    int n = routes.size();
+    int m = routes[0].size();
+
+    unordered_map<int,vector<int>> map;
+    vector<int> arr(m,0);
+
+    for(int i=0; i<n; i++){
+        arr.push_back(i);
+        for(int j=0; j<m; j++){
+            map.insert(routes[i][j], arr);
+        }
+    }
+
+    vector<bool> bus(n, false);
+    vector<vector<bool>> stops(n, vector<bool>(m, false));
+
+    queue<int> que;
+    que.push(S);
+
+    int length = 0;
+
+    while(que.size()!=0){
+        int size = que.size();
+
+        while(size-- >0){
+            int vtx = que.front(); que.pop();
+
+            if(vtx == T){
+                return length;
+            }
+
+            stops[vtx] = true;
+            bus[map[vtx]] = true;
+        }
+    }
+
+}
+
 int main(){
 
 }

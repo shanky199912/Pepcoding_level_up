@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 class l002_directed{
@@ -91,6 +92,152 @@ class l002_directed{
         }
     }
 
+    public static boolean topologiaclSortCycle_(int src,int[] vis,ArrayList<Integer> ans){ // faith: it will detect cycle.
+        if(vis[src]==1) return true; //cycle.
+        if(vis[src]==2) return false;// already visited vertex.
+
+        vis[src]=1;
+        boolean res=false;
+        for(int e:graph[src])
+            res=res || topologiaclSortCycle_(e,vis,ans);
+
+        vis[src]=2;
+        ans.add(src);
+        return res;
+    }
+
+    public static void topologiaclSortCycle(){
+        int[] vis=new int[N];
+        ArrayList<Integer> ans=new ArrayList<>();
+        
+        boolean res=false;
+        for(int i=0;i<N && !res;i++){
+            if(vis[i]==0)
+            res=res||topologiaclSortCycle_(i,vis,ans);
+        }
+        
+        if(!res)
+           for(int i=ans.size()-1;i>=0;i--) 
+              System.out.print(ans.get(i)+ " ");
+        else 
+           System.out.print("Cycle");
+    }
+
+    public static int SCC_dfs(int src, ArrayList<Integer>[] ngraph, boolean[] vis, ArrayList<Integer> ans){
+
+        int count = 0;
+        vis[src] = true;
+        for(int ele: ngraph[src]){
+            if(!vis[ele])
+                count += SCC_dfs(ele, ngraph, vis, ans);
+        }
+        ans.add(src);
+        return count+1;
+    }
+
+    public static void SCC(){
+        boolean[] vis = new boolean[N];
+        ArrayList<Integer> list = new ArrayList<>();
+
+        for(int i=0; i<N; i++){
+            if(!vis[i]){
+                topological_dfs(i,vis,list);
+            }
+        }
+
+        ArrayList<Integer>[] ngraph = new ArrayList[N];
+        for(int i=0; i<N; i++){
+            ngraph[i] = new ArrayList<>();
+        }
+
+        for(int i=0; i<N; i++){
+            for(int ele: graph[i]){
+                ngraph[ele].add(i);
+            }   
+        }
+
+        vis = new boolean[N];
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i= list.size()-1; i>=0 ; i--){
+            if(!vis[list.get(i)]){
+                System.out.println(SCC_dfs(list.get(i), ngraph, vis, ans));
+                System.out.println(ans);
+            }
+        }
+    }
+
+    public int longestIncreasingPath(int[][] board) {
+        
+        int n = board.length;
+        int m = board[0].length;
+        
+        ArrayList<Integer>[] indegree = new ArrayList[n];
+        for(int i=0; i<m; i++){
+            indegree[i] = new ArrayList<Integer>();
+        }
+        
+        int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
+        
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                for(int d=0; d<4; d++){
+                    
+                    int x = i + dir[d][0];
+                    int y = j + dir[d][1];
+                    
+                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j]){
+                        indegree[x].set(y, indegree[x].get(y)+1);
+                    }
+                        
+                }
+            }
+        }
+        
+        LinkedList<Integer> que = new LinkedList<>();
+        
+        for(int i=0; i<n ;i++){
+            for(int j=0; j<m; j++){
+                if(indegree[i].get(j)==0)
+                    que.addLast(i*m + j);
+            }
+        }
+        
+        int length = 0;
+        
+        while(que.size()!=0){
+            int size = que.size();
+            
+            while(size-- >0){
+                int vtx = que.removeFirst();
+                
+                int i = vtx/m;
+                int j = vtx%m;
+                
+                for(int d =0; d<4; d++){
+                    int x = i + dir[d][0];
+                    int y = j + dir[d][1];
+                    
+                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j]){
+                        Integer v = indegree[x].get(y);
+                        --v;
+                        if(v==0)
+                            que.push(x*m + y);
+                    }
+                }
+                
+            }
+            length++;
+        }
+        return length;
+    }
+
+    public int numBusesToDestination(int[][] routes, int S, int T) {
+        
+        HashMap<Integer,int[]> map = new HashMap<>();
+        
+        for(int i=0; i<)
+    }
+
     public static void constructgraph(){
 
         graph = new ArrayList[N];
@@ -108,20 +255,28 @@ class l002_directed{
         graph[2].add(1);
         graph[1].add(0);
 
-        // graph[7].add(5);
-        // graph[7].add(6);
-        // graph[5].add(2);
-        // graph[5].add(4);
-        // graph[6].add(4);
-        // graph[6].add(3);
-        // graph[3].add(1);
+        // graph[1].add(3);
+        // graph[1].add(1);
+        // graph[4].add(2);
+        // graph[4].add(1);
+        // graph[4].add(13);
         // graph[2].add(1);
+        // graph[3].add(2);
+        // graph[1].add(3);
+        // graph[4].add(12);
+        // graph[13].add(15);
+        // graph[15].add(14);
+        // graph[14].add(13);
+        // graph[11].add(14);
+        // graph[11].add(12);
+        // graph[12].add(13);
 
         display(graph);
 
-        topologicalSort();
-        System.out.println();
-        kahnsAlgo();
+        // topologicalSort();
+        // System.out.println();
+        // kahnsAlgo();
+        SCC();
     }
 
 }

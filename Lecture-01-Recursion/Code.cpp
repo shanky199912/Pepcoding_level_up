@@ -115,3 +115,51 @@ int main(){
     solve();
     return 0;
 }
+
+// #include<bits/stdc++.h> 
+// using namespace std; 
+// #define MAX 100001 
+  
+// // dp[i] is going to store Log ( i !) in base 2 
+// double dp[MAX]; 
+  
+// double probability(int n, int k) 
+// { 
+//     double ans = 0; // Initialize result 
+  
+//     // Iterate from k heads to n heads 
+//     for (int i=k; i <= n; ++i) 
+//     { 
+//         double res = dp[n] - dp[i] - dp[n-i] - n; 
+//         ans += pow(2.0, res); 
+//     } 
+  
+//     return ans; 
+// } 
+  
+// void precompute() 
+// { 
+//     // Preprocess all the logarithm value on base 2 
+//     for (int i=2; i < MAX; ++i) 
+//         dp[i] = log2(i) + dp[i-1]; 
+// } 
+  
+// // Driver code 
+// int main() 
+// { 
+//     precompute(); 
+//     // int n,k;
+//     // cin>>n;
+//     // cin>>k;
+//     // cout<<probability(n,k);
+//     //Probability of getting 2 head out of 3 coins 
+//     cout << probability(4, 3) << "\n"; 
+  
+//     //Probability of getting 3 head out of 6 coins 
+//     cout << probability(6, 3) << "\n"; 
+  
+//     //Probability of getting 500 head out of 10000 coins 
+//     cout << probability(1000, 500); 
+  
+//     return 0; 
+// } 

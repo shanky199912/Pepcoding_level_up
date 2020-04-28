@@ -287,6 +287,65 @@ class l001{
         }
     }
 
+    public static boolean isBipartite(int[][] graph) {
+        
+        int n = graph.length;
+        if(n == 0) return true;
+        
+        int m = graph[0].length;
+        
+        int[] vis = new int[n];
+        
+        for(int i=0; i<n; i++){
+            if(vis[i] == 0){
+                boolean ans = isBipartite_bfs(graph, i, vis);
+            }
+        }
+        return true;
+    }
+    
+    static class Pair{
+        int s;
+        int color;
+        
+        Pair(int src, int color){
+            this.s = src;
+            this.color = color;
+        }
+    }
+    
+    public static boolean isBipartite_bfs(int[][] graph, int src, int[] vis){
+        
+        LinkedList<Pair> que = new LinkedList<>();
+        que.addLast(new Pair(src, 0));
+        
+        while(que.size()!=0){
+            int size = que.size();
+            
+            while(size-- >0){
+                Pair vtx = que.removeFirst();
+                
+                if(vis[vtx.s] != 0){
+                    
+                    if(vis[vtx.s]%2 != vtx.color%2)
+                        return false;
+                }
+                
+                vis[vtx.s] = vtx.color;
+                
+                // int i = vtx.s/graph[0].length;
+                // int j = vtx.s%graph[0].length;
+                
+                for(int e : graph[vtx.s]){
+                    // int nbr = e * graph[0].length + j;
+                    if(vis[e] == 0)
+                        que.addLast(new Pair(e, vtx.color + 1));
+                }
+            }
+        }
+        return true;
+    }
+
     public static void constructgraph(){
 
         graph = new ArrayList[N];

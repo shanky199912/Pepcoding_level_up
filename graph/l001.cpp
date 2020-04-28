@@ -414,6 +414,40 @@ void BFS_06(int src, vector<bool> &vis){
     }
 }
 
+bool isBipartiteBfs_02(int src, vector<int>& vis){
+    
+    queue<pair<int,int>> que; //int-src, int-level; 
+    que.push({src,0});
+
+    while(que.size()!=0){
+        pair<int,int> vtx = que.front(); que.pop();
+
+        if(vis[vtx.first] != 0){
+            //do some work.
+            if(vis[vtx.first]%2 != vtx.second%2)
+                return false;
+        }
+        vis[vtx.first] = vtx.second;
+
+        for(Edge* e: graph[vtx.first])
+            if(vis[e->v] == 0)
+                que.push({e->v, vtx.second + 1});
+    }
+    return true;
+}
+
+bool isBipartite_02(){
+    vector<int> vis(N, 0);
+    for(int i=0; i<N; i++){
+        if(vis[i]==0){
+            bool ans = isBipartiteBfs_02(i, vis);
+            if(ans==false)
+                return false;
+        }
+    }
+    return true;
+}
+
 bool isBipartiteBfs(int src, vector<int> &vis){
 
     queue<pair<int,int>> que; //int -> src, int-> color(0,1,-1)
@@ -496,7 +530,7 @@ void questions(){
     //     cout<<val<<" ";
     // }
     // cout<<endl;
-    cout<<(boolalpha)<<isCyclic()<<endl;
+    cout<<(boolalpha)<<isBipartite_02()<<endl;
 }
 
 int main(){
