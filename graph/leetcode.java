@@ -46,4 +46,46 @@ class leetcode{
         }
         return -1;
     }
+
+    //286===========================================
+    public void wallsAndGates(int[][] rooms) {
+        
+        int n = rooms.length;
+        if(n == 0)return;
+
+        int m = rooms[0].length;
+
+        int[][] dir = {{-1, 0}, {0, -1}, {0, 1}, {1, 0}}; 
+        
+        LinkedList<Integer> que = new LinkedList<>();
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(rooms[i][j] == 0){
+                    que.addLast(i*m + j);
+                }
+            }
+        }
+
+        int level = 1;
+        while(que.size()!=0){
+            int size = que.size();
+            while(size-- >0){
+                int vtx = que.removeFirst();
+
+                int r = vtx/m;
+                int c = vtx%m;
+
+                for(int d=0; d<4; d++){
+                    int x = r + dir[d][0];
+                    int y = c + dir[d][1];
+
+                    if(x>=0 && x<n && y>=0 && y<m && rooms[x][y]==2147483647){
+                        que.addLast(x*m + y);
+                        rooms[x][y] = level;
+                    }
+                }
+            }
+            level++;
+        }
+    }
 }

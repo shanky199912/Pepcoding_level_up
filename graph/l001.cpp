@@ -258,10 +258,12 @@ vector<string> gcc(){
     int counter = 0;
     for(int i=0; i<N; i++){
         if(!visited[i]){
+            counter++;
             string comp = gscc_bfs(i,visited);
             ans.push_back(comp);
         }
     }
+    cout<<counter<<endl;
     return ans;
 }
 
@@ -525,12 +527,12 @@ void questions(){
     // BFS_05(0,vis);
     // BFS_04(0, vis);
     // cout<<(boolalpha)<<isConnected()<<endl;
-    // vector<string> ans = gcc();
-    // for(string val: ans){
-    //     cout<<val<<" ";
-    // }
-    // cout<<endl;
-    cout<<(boolalpha)<<isBipartite_02()<<endl;
+    vector<string> ans = gcc();
+    for(string val: ans){
+        cout<<val<<" ";
+    }
+    cout<<endl;
+    //cout<<(boolalpha)<<isBipartite_02()<<endl;
 }
 
 int main(){
