@@ -59,7 +59,7 @@ class l001{
             }
         }
         else{
-            int idx = word.charAt(si);
+            int idx = word.charAt(si) - 'a';
             if(node.childs[idx] !=  null){
                 res = res || search_(node.childs[idx], si+1, word);
             }

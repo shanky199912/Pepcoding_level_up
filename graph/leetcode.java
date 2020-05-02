@@ -2,6 +2,55 @@ import java.util.*;
 
 class leetcode{
     
+    static string calldfs(int r, int c, int n, int m,int[][] board){
+
+        if(board[r][c]!=1) return "";
+
+        board[r][c] = 2;
+        String s = "";
+        if(r-1>=0){
+            s = s +"t";
+            s = s + calldfs(r-1,c,n,m, board);
+            s = s +"t";
+        }
+        if(c-1>=0){
+            s = s +"l";
+            s += calldfs(r,c-1,n,m,str+"l", board);
+        }
+        if(r+1<n){
+            s = s +"d";
+            s +=calldfs(r+1,c,n,m,str+"d", board);
+        }
+        if(c+1<m){
+            s = s +"r";
+            s += calldfs(r,c+1,n,m,str+"r", board);
+        }
+
+        return s;
+    }
+    
+    static void distinctIslands(int[][] board){
+
+        int n = board.length;
+        int m = board[0].length;
+
+        ArrayList<String> list = new ArrayList<>();
+        for(int i=0; i<n; i++){
+            for(int j = 0; j<m; j++){
+
+                if(board[i][j] == 1){
+
+                    String str = calldfs(i, j,n,m, "",board);
+                    
+                    for(String rr: list){
+                        if(!list.contains(str))
+                            list.add(str);
+                    }
+                }
+            }
+        }
+    }
+    
     //1091=========================================
     public int shortestPathBinaryMatrix(int[][] grid) {
         

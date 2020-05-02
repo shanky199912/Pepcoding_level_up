@@ -363,6 +363,51 @@ int orangesRotting(vector<vector<int>> &board) {
     return (level==0)?0:level-1;
 }
 
+//leetcode-546============================================
+vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
+        
+    if(matrix.size() == 0 || matrix[0].size()==0) return matrix;
+
+        int n = matrix.size();
+        int m = matrix[0].size();
+        vector<vector<bool>> vis(n, vector<bool>(m, false));
+
+        queue<int> que;
+        int dir[4][2] = {{0,1},{-1,0},{1,0},{0,-1}};
+
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(matrix[i][j] == 0)
+                    que.push(i*m + j);
+            }
+        }
+
+    int level = 1;
+    while(que.size()!=0){
+            int size = que.size();
+            while(size-- >0){
+                int vtx = que.front(); que.pop();
+
+                int r = vtx/m;
+                int c = vtx%m;
+                
+                for(int d=0; d<4; d++){
+                    int x = r + dir[d][0];
+                    int y = c + dir[d][1];
+
+                    if(x>=0 && y>=0 && x<n && y<m && matrix[x][y] == 1 && !vis[x][y]){
+                        que.push(x*m + y);
+                        matrix[x][y] = level;
+                        vis[x][y] = true;
+                    }
+                }
+        }
+        level++;
+    }
+
+    return matrix;     
+}
+
 //leetcode -815-bus routes=========================================
 
 int numBusesToDestination(vector<vector<int>>& routes, int S, int T) {
@@ -404,6 +449,37 @@ int numBusesToDestination(vector<vector<int>>& routes, int S, int T) {
     }
 
 }
+
+//leetcode-787==================================================
+class Edge{
+public:
+    int v = 0;
+    int w = 0;
+
+    Edge(int v, int w){
+        this->v = v;
+        this->w = w;
+    }
+};
+
+int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+    
+    vector<vector<Edge*>> graph(n, vector<Edge*>());
+    for(vector<int> ar: flights){
+        addEdge(ar, graph);
+    }
+
+    vector<bool> vis(n,false);
+    bfs(src, graph, vis);
+}
+
+void bfs()
+
+void addEdge(vector<int>& ar, vector<vector<Edge*>> &graph){
+    graph[ar[0]].push_back(new Edge(ar[1], ar[2]));
+}
+
+
 
 int main(){
 

@@ -106,16 +106,16 @@ class l001{
         return count;
     }
 
-    // static class Pair{
-    //     int largeW = 0;
-    //     String lps = "";
-    //     int smallW = (int)1e7;
-    //     String sps = "";
-    //     int ciel = (int)1e7;
-    //     String cps = "";
-    //     int floor = 0;
-    //     String fps = "";
-    // }
+    static class Pair{
+        int largeW = 0;
+        String lps = "";
+        int smallW = (int)1e7;
+        String sps = "";
+        int ciel = (int)1e7;
+        String cps = "";
+        int floor = 0;
+        String fps = "";
+    }
 
     public static void allSolution(int src, int dest, int w, boolean[] vis, String ans, Pair pair, int K){
 
@@ -152,55 +152,6 @@ class l001{
         }
         vis[src] = false;
         return ;
-    }
-
-    static string calldfs(int r, int c, int n, int m,int[][] board){
-
-        if(board[r][c]!=1) return "";
-
-        board[r][c] = 2;
-        String s = "";
-        if(r-1>=0){
-            s = s +"t";
-            s = s + calldfs(r-1,c,n,m, board);
-            s = s +"t";
-        }
-        if(c-1>=0){
-            s = s +"l";
-            s += calldfs(r,c-1,n,m,str+"l", board);
-        }
-        if(r+1<n){
-            s = s +"d";
-            s +=calldfs(r+1,c,n,m,str+"d", board);
-        }
-        if(c+1<m){
-            s = s +"r";
-            s += calldfs(r,c+1,n,m,str+"r", board);
-        }
-
-        return s;
-    }
-    
-    static void distinctIslands(int[][] board){
-
-        int n = board.length;
-        int m = board[0].length;
-
-        ArrayList<String> list = new ArrayList<>();
-        for(int i=0; i<n; i++){
-            for(int j = 0; j<m; j++){
-
-                if(board[i][j] == 1){
-
-                    String str = calldfs(i, j,n,m, "",board);
-                    
-                    for(String rr: list){
-                        if(!list.contains(str))
-                            list.add(str);
-                    }
-                }
-            }
-        }
     }
 
     static class Pair{
@@ -287,60 +238,94 @@ class l001{
         }
     }
 
-    public static boolean isBipartite(int[][] graph) {
+    // static class Pair{
+    //     int s;
+    //     int color;
         
-        int n = graph.length;
-        if(n == 0) return true;
-        
-        int m = graph[0].length;
-        
-        int[] vis = new int[n];
-        
-        for(int i=0; i<n; i++){
-            if(vis[i] == 0){
-                boolean ans = isBipartite_bfs(graph, i, vis);
-            }
-        }
-        return true;
-    }
+    //     Pair(int src, int color){
+    //         this.s = src;
+    //         this.color = color;
+    //     }
+    // }
     
-    static class Pair{
-        int s;
-        int color;
+    // public static boolean isBipartite_bfs(int[][] graph, int src, int[] vis){
         
-        Pair(int src, int color){
-            this.s = src;
-            this.color = color;
-        }
-    }
+    //     LinkedList<Pair> que = new LinkedList<>();
+    //     que.addLast(new Pair(src, 0));
+        
+    //     while(que.size()!=0){
+    //         int size = que.size();
+            
+    //         while(size-- >0){
+    //             Pair vtx = que.removeFirst();
+                
+    //             if(vis[vtx.s] != 0){
+                    
+    //                 if(vis[vtx.s]%2 != vtx.color%2)
+    //                     return false;
+    //             }
+                
+    //             vis[vtx.s] = vtx.color;
+                
+    //             // int i = vtx.s/graph[0].length;
+    //             // int j = vtx.s%graph[0].length;
+                
+    //             for(int e : graph[vtx.s]){
+    //                 // int nbr = e * graph[0].length + j;
+    //                 if(vis[e] == 0)
+    //                     que.addLast(new Pair(e, vtx.color + 1));
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
     
-    public static boolean isBipartite_bfs(int[][] graph, int src, int[] vis){
+    //another method - bipartite using int[]..
+    public static boolean isBipartite_bfs_02(ArrayList<Edge>[] graph, int src, int[] vis){
         
-        LinkedList<Pair> que = new LinkedList<>();
-        que.addLast(new Pair(src, 0));
+        LinkedList<int[]> que = new LinkedList<>();
+        que.addLast(new int[]{src, 0});
         
         while(que.size()!=0){
             int size = que.size();
             
             while(size-- >0){
-                Pair vtx = que.removeFirst();
+                int[] vtx = que.removeFirst();
                 
-                if(vis[vtx.s] != 0){
+                if(vis[vtx[0]] != 0){
                     
-                    if(vis[vtx.s]%2 != vtx.color%2)
+                    if(vis[vtx[0]]%2 != vtx[1]%2)
                         return false;
                 }
                 
-                vis[vtx.s] = vtx.color;
+                vis[vtx[0]] = vtx[1];
                 
                 // int i = vtx.s/graph[0].length;
                 // int j = vtx.s%graph[0].length;
                 
-                for(int e : graph[vtx.s]){
+                for(Edge e : graph[vtx[0]]){
                     // int nbr = e * graph[0].length + j;
-                    if(vis[e] == 0)
-                        que.addLast(new Pair(e, vtx.color + 1));
+                    if(vis[e.v] == 0)
+                        que.addLast(new int[]{e.v, vtx[1] + 1});
                 }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isBipartite(ArrayList<Edge>[] graph) {
+        
+        int n = graph.length;
+        if(n == 0) return true;
+        
+        int m = graph[0].size();
+        
+        int[] vis = new int[n];
+        
+        for(int i=0; i<n; i++){
+            if(vis[i] == 0){
+                boolean ans = isBipartite_bfs_02(graph, i, vis);
+                if(!ans)return false;
             }
         }
         return true;
@@ -372,13 +357,15 @@ class l001{
 
         boolean[] vis = new boolean[N];
         // System.out.println(hasPath(0, 6, vis));
-        System.out.println(printPath(0,6,0, vis,""));
-        System.out.println("---------------------");
-        Pair pair = new Pair();
-        allSolution(0,6,0, vis,"",pair,20);
-        System.out.println("Largest-:"+pair.lps+"@"+pair.largeW);
-        System.out.println("smallest-:"+pair.sps+"@"+pair.smallW);
-        System.out.println("ciel path-:"+pair.cps+"@"+pair.ciel);
-        System.out.println("floor path-:"+pair.fps+"@"+pair.floor);
+        // System.out.println(printPath(0,6,0, vis,""));
+        // System.out.println("---------------------");
+        // Pair pair = new Pair();
+        // allSolution(0,6,0, vis,"",pair,20);
+        // System.out.println("Largest-:"+pair.lps+"@"+pair.largeW);
+        // System.out.println("smallest-:"+pair.sps+"@"+pair.smallW);
+        // System.out.println("ciel path-:"+pair.cps+"@"+pair.ciel);
+        // System.out.println("floor path-:"+pair.fps+"@"+pair.floor);
+
+        System.out.println(isBipartite(graph));
     }
 }
