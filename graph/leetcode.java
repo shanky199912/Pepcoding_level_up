@@ -137,4 +137,66 @@ class leetcode{
             level++;
         }
     }
+
+    //329 ============================================
+    public int longestIncreasingPath(int[][] board) {
+        
+        if(board.length==0 || board[0].length==0) return 0;
+        
+        int n = board.length;
+        int m = board[0].length;
+        
+        int[][] dir = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        
+        int[][] indegree = new int[n][m];
+        
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                for(int d=0; d<4; d++){
+                    
+                    int x = i + dir[d][0];
+                    int y = j + dir[d][1];
+                    
+                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j]){
+                        indegree[x][y]++;
+                    }
+                        
+                }
+            }
+        }
+        
+        LinkedList<Integer> que = new LinkedList<>();
+        
+        for(int i=0; i<n ;i++){
+            for(int j=0; j<m; j++){
+                if(indegree[i][j] == 0)
+                    que.addLast(i*m + j);
+            }
+        }
+        
+        int length = 0;
+        
+        while(que.size()!=0){
+            int size = que.size();
+            
+            while(size-- >0){
+                int vtx = que.removeFirst();
+                
+                int i = vtx/m;
+                int j = vtx%m;
+                
+                for(int d =0; d<4; d++){
+                    int x = i + dir[d][0];
+                    int y = j + dir[d][1];
+                    
+                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j] && --indegree[x][y]==0){
+                        que.addLast(x*m + y);
+                    }
+                }
+                
+            }
+            length++;
+        }
+        return length;
+    }
 }

@@ -207,7 +207,7 @@ int islandPerimeter(vector<vector<int>>& board){
     return (4 * count_ones - 2 * count_regions);
 }
 
-//leetcode -1091
+//leetcode -1091=============================================================
 int shortestPathBinaryMatrix(vector<vector<int>>& board) {
     int n = board.size();
     int m = board[0].size();
@@ -259,6 +259,7 @@ int shortestPathBinaryMatrix(vector<vector<int>>& board) {
     return -1;
 }
 
+//leetcode -286=================================================
 int wallsandgate(vector<vector<int>>& board){
 
     int n = board.size();
@@ -311,6 +312,7 @@ int wallsandgate(vector<vector<int>>& board){
     return -1;
 }
 
+//leetcode -994=============================================
 int orangesRotting(vector<vector<int>> &board) {
     
     int n = board.size();
@@ -361,6 +363,150 @@ int orangesRotting(vector<vector<int>> &board) {
 
 
     return (level==0)?0:level-1;
+}
+
+//leetcode -207=======================================================
+bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+    
+    vector<vector<int>> graph(numCourses, vector<int>());
+    for(vector<int> ar[] : prerequisites)
+        graph[ar[0]].push_back(ar[1]);
+
+    return kahnsAlgo(graph, numCourses);
+
+}
+
+bool kahnsAlgo(vector<vector<int>>& graph, int N){
+
+    vector<int> indegree(N, 0);
+    for(int i=0; i<N; i++){
+        for(int e: graph[i])
+            indegree[e]++;
+    }
+
+    queue<int> que;
+    for(int i=0; i<N; i++){
+        if(indegree[i] == 0)
+            que.push(i);
+    }
+
+    vector<int> ans;
+    while(que.size()!=0){
+        int size = que.size();
+        while(size-- >0){
+            int vtx = que.front(); que.pop();
+            ans.push_back(vtx);
+            for(int e: graph[vtx])
+                if(--indegree[e] == 0)
+                    que.push(e);
+        }
+    }
+
+    if(ans.size()!= N) return false;
+    else
+        return true;
+}
+
+//leetcode-210=======================================================
+vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
+    
+    if(prerequisites.size() == 0) return {};
+
+    vector<vector<int>> graph(numCourses, vector<int>());
+    for(vector<int> ar : prerequisites)
+        graph[ar[0]].push_back(ar[1]);
+
+    vector<int> ans;
+    kahnsAlgo2(graph, numCourses, ans);
+    
+    if(ans.size() != numCourses) return {};
+
+    vector<int> list;
+    for(int i= ans.size()-1; i>=0; i--) list.push_back(ans[i]);
+    return list;
+}
+
+void kahnsAlgo2(vector<vector<int>>& graph, int N, vector<int>& ans){
+
+    vector<int> indegree(N, 0);
+    for(int i=0; i<N; i++){
+        for(int e: graph[i])
+            indegree[e]++;
+    }
+
+    queue<int> que;
+    for(int i=0; i<N; i++)
+        if(indegree[i] == 0)
+            que.push(i);
+
+    while(que.size()!=0){
+        int size = que.size();
+        while(size-- >0){
+            int vtx = que.front();  que.pop();
+
+            ans.push_back(vtx);
+
+            for(int e: graph[vtx])
+                if(--indegree[e] == 0)
+                    que.push(e);
+        }
+    }
+}
+
+int longestIncreasingPath(vector<vector<int>>& matrix) {
+
+    if(matrix.size() == 0 || matrix[0].size() == 0) return 0;
+
+    int n = matrix.size();
+    int m = matrix[0].size();
+
+    int dir[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    vector<vector<int>> indegree(n, vector<int>(m, 0));
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            for(int d=0; d<4; d++){
+
+                int x = i + dir[d][0];
+                int y = j + dirp[d][1];
+
+                if(x>=0 && x<n && y>=0 && y<m && matrix[x][y] > matrix[i][j])
+                    indegree[x][y]++;
+            }
+        }
+    }
+
+    queue<int> que;
+
+    for(int i=0; i<n; i++){
+        for(int j =0; j<m; j++){
+            if(indegree[i][j] == 0)
+                que.push(i*m + j); //2d to 1d.
+        }
+    }
+
+    int level = 0;
+    while(que.size()! = 0){
+        int size = que.size();
+        while(size-- >0){
+            int vtx = que.front();  que.pop();
+
+            int r = vtx/m;
+            int y = vtx%m;
+
+            for(int d =0; d<4; d++){
+                int x = r + dir[d][0];
+                int y = c + dir[d][1];
+
+                if(x>=0 && x<n && y>=0 && y<m && matrix[x][y] > matrix[i][j] && --indegree[x][y] == 0)
+                    que.push(x*m + y);
+            }
+        }
+        level++;
+    }
+
+    return level;
 }
 
 //leetcode-546============================================
@@ -415,13 +561,13 @@ int numBusesToDestination(vector<vector<int>>& routes, int S, int T) {
     int n = routes.size();
     int m = routes[0].size();
 
+    vector<int> arr;
     unordered_map<int,vector<int>> map;
-    vector<int> arr(m,0);
 
     for(int i=0; i<n; i++){
         arr.push_back(i);
         for(int j=0; j<m; j++){
-            map.insert(routes[i][j], arr);
+            map.insert(routes[i][j], arr.push_back(i));
         }
     }
 
@@ -479,7 +625,113 @@ void addEdge(vector<int>& ar, vector<vector<Edge*>> &graph){
     graph[ar[0]].push_back(new Edge(ar[1], ar[2]));
 }
 
+//leetcode-684============================================================
+vector<int> par;
+vector<int> setSize;
 
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+void mergeSet(int l1, int l2){
+
+    if(setSize[l1] < setSize[l2]){
+        par[l1] = l2;
+        setSize[l2] += setSize[l1];
+    }
+    else{
+
+        par[l2] = l1;
+        setSize[l1] += setSize[l2];
+    }
+}
+
+vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+
+    for(int i=0; i<=edges.size(); i++){  // <=edges.size because humne index 0 se liya hai and question me edges 1 se hai..
+        par.push_back(i);
+        setSize.push_back(1);
+    }
+
+    for(vector<int>& ar : edges){
+
+        int u = ar[0];
+        int v = ar[1];
+
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+
+        if(p1 != p2){
+            mergeSet(p1,p2);
+        }
+        else{
+            return ar;
+        }
+    }
+    return {};
+}
+
+//leetcode-547========================================================
+vector<int> par;
+vector<int> setSize;
+
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+void mergeSet(int l1, int l2){
+
+    if(setSize[l1] < setSize[l2]){
+        par[l1] = l2;
+        setSize[l2] += setSize[l1];
+    }
+    else{
+
+        par[l2] = l1;
+        setSize[l1] += setSize[l2];
+    }
+}
+
+int findCircleNum(vector<vector<int>>& board) {
+
+    if(board.size() == 0) return 0;
+
+    int n = board.size();
+    int m = board[0].size();
+
+    for(int i=0; i<n; i++){
+
+        par.push_back(i);
+        setSize.push_back(1);
+    }
+
+    int count = 0;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+
+            if(board[i][j] == 1){
+
+                int p1= findPar(i);
+                int p2= findPar(j);
+
+                if(p1 != p2){
+                    mergeSet(p1, p2);
+                }
+                else{
+                    if(setSize[p2] == n)
+                        return 1;
+                    else
+                        count++;
+                }
+            }
+
+        }
+    }
+}
 
 int main(){
 

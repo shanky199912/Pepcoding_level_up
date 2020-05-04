@@ -166,77 +166,14 @@ class l002_directed{
         }
     }
 
-    public int longestIncreasingPath(int[][] board) {
-        
-        int n = board.length;
-        int m = board[0].length;
-        
-        ArrayList<Integer>[] indegree = new ArrayList[n];
-        for(int i=0; i<m; i++){
-            indegree[i] = new ArrayList<Integer>();
-        }
-        
-        int[][] dir = {{0,1},{0,-1},{1,0},{-1,0}};
-        
-        for(int i=0; i<n; i++){
-            for(int j=0; j<m; j++){
-                for(int d=0; d<4; d++){
-                    
-                    int x = i + dir[d][0];
-                    int y = j + dir[d][1];
-                    
-                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j]){
-                        indegree[x].set(y, indegree[x].get(y)+1);
-                    }
-                        
-                }
-            }
-        }
-        
-        LinkedList<Integer> que = new LinkedList<>();
-        
-        for(int i=0; i<n ;i++){
-            for(int j=0; j<m; j++){
-                if(indegree[i].get(j)==0)
-                    que.addLast(i*m + j);
-            }
-        }
-        
-        int length = 0;
-        
-        while(que.size()!=0){
-            int size = que.size();
-            
-            while(size-- >0){
-                int vtx = que.removeFirst();
-                
-                int i = vtx/m;
-                int j = vtx%m;
-                
-                for(int d =0; d<4; d++){
-                    int x = i + dir[d][0];
-                    int y = j + dir[d][1];
-                    
-                    if(x>=0 && x<n && y>=0 && y<m && board[x][y] > board[i][j]){
-                        Integer v = indegree[x].get(y);
-                        --v;
-                        if(v==0)
-                            que.push(x*m + y);
-                    }
-                }
-                
-            }
-            length++;
-        }
-        return length;
-    }
+    
 
-    public int numBusesToDestination(int[][] routes, int S, int T) {
+    // public int numBusesToDestination(int[][] routes, int S, int T) {
         
-        HashMap<Integer,int[]> map = new HashMap<>();
+    //     HashMap<Integer,int[]> map = new HashMap<>();
         
-        for(int i=0; i<)
-    }
+    //     for(int i=0; i<)
+    // }
 
     public static void constructgraph(){
 
