@@ -675,7 +675,7 @@ vector<int> findRedundantConnection(vector<vector<int>>& edges) {
 
 //leetcode-547========================================================
 vector<int> par;
-vector<int> setSize;
+vector<long long> setSize;
 
 int findPar(int vtx){
 
@@ -709,28 +709,215 @@ int findCircleNum(vector<vector<int>>& board) {
         setSize.push_back(1);
     }
 
-    int count = 0;
+    int count = n;
     for(int i=0; i<n; i++){
-        for(int j=0; j<m; j++){
+        for(int j=i+1; j<m; j++){
 
             if(board[i][j] == 1){
-
-                int p1= findPar(i);
-                int p2= findPar(j);
-
-                if(p1 != p2){
-                    mergeSet(p1, p2);
+                
+                int p1 = findPar(i);
+                int p2 = findPar(j);
+                if(p1!=p2){
+                    mergeSet(p1,p2);
+                    count--;
                 }
-                else{
-                    if(setSize[p2] == n)
-                        return 1;
-                    else
-                        count++;
-                }
+                    //par[p1] = p2;
             }
-
         }
     }
+
+//     vector<bool> vis(n, false);
+//     for(int i=0; i<n; i++){
+
+//         int p = findPar(i);
+//         if(!vis[p]){
+//             vis[p] = true;
+//             if(setSize[p] == n)
+//                 return 1;
+//             else
+//                 count++;
+//         }
+//     }
+    
+    return count;
+}
+
+//leetcode-827=============================================
+int largestIsland(vector<vector<int>>& board) {
+
+        int n = board.size();
+        int m = board[0].size();
+
+        int maxA = 0;
+        bool hasZero = false;
+        vector<vector<bool>> vis(n,vector<bool>(n, false));
+        for(int i=0; i<n; i++){
+            for(int j=0; j<m; j++){
+                if(board[i][j] == 0){
+                    hasZero = true;
+                    board[i][j] = 1;
+                    vis.resize(n, vector<int>(m,false));
+                    int count = dfs(i, j,n,m, board,vis);
+                    maxA = max(maxA, count);
+                    board[i][j] = 0;
+                }
+            }
+        }
+
+        if(hasZero) return maxA;
+        else{
+            return n*m;
+        }
+    }
+
+    int dfs(int i, int j, int n, int m, vector<vector<int>>& board, vector<vector<bool>>& vis){
+
+        if(board[i][j] != 1) return 0;
+
+        vis[i][j] = true;
+        int count = 0;
+        if(i-1>=0 && !vis[i-1][j]){
+            count += dfs(i-1,j,n,m,board);
+        }
+        if(i+1<n && !vis[i+1][j]) {
+            count += dfs(i+1,j,n,m,board);
+        }
+        if(j-1>=0 && !vis[i][j-1]){
+            count += dfs(i,j-1,n,m,board);
+        }
+        if(j+1<m && !vis[i][j+1]){
+            count += dfs(i,j+1,n,m,board);
+        }
+        return count + 1;
+    }
+
+//leetcode - 1061=================================================
+vector<int> par;
+vector<long long> setSize;
+
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+string smallestString(string A, string B, strring S){
+
+    for(int i=0; i<26; i++){
+        par.push_back(i);
+    }
+
+    for(int i=0; i<A.length(); i++){
+        int u = A[i]-'a';
+        int v = B[i]-'a';
+
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+
+        par[p1] = min(p1,p2);
+        par[p2] = min(p1,p2);
+    }
+
+    string ans = "";
+    for(int i=0; i<S.length(); i++){
+        ans += (char)(findPar(S[i]-'a') + 'a'); 
+    }
+
+    return ans;
+}
+
+//leetcode -200
+vector<int> par;
+vector<long long> setSize;
+
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+int numIslands(vector<vector<char>>& grid) {
+    
+    if(grid.size()==0 || grid[0].size() == 0) return 0;
+    int n = grid.size();
+    int m = grid[0].size();
+    int noOfOnes = 0;
+    for(int i=0;i<n; i++){
+        for(int j=0; j<m; j++){
+            par.push_back(i*m + j);
+
+            if(grid[i][j] == '1')
+                noOfOnes++;
+        }
+    }
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            
+            if(grid[i][j] == '1'){
+
+                if(i+1 <n && grid[i+1][j] == '1'){
+
+                    int p1 = findPar(i*m + j);
+                    int p2 = findPar((i+1)*m + j);
+
+                    if(p1 != p2){
+                        par[p2] = p1;
+                        noOfOnes--;
+                    }
+                }
+
+                if(j+1 <m && grid[i][j+1] == '1'){
+                    
+                    int p1 = findPar(i*m + j);
+                    int p2 = findPar(i*m + (j+1));
+
+                    if(p1 != p2){
+                        par[p2] = p1;
+                        noOfOnes--;
+                    }
+                }
+            }
+        }
+    }
+
+    return noOfOnes;
+}
+
+//leetcode-839=================================================
+bool isSimilar(string& P, string& Q){
+
+    int count = 0;
+    for(int i=0; i<P.length(); i++){
+
+        if(P[i] != Q[i] && ++count >2)
+            return false;
+    }
+    return true;
+}
+
+int numSimilarGroups(vector<string>& A) {
+    
+    int n = A.size();
+    for(int i=0; i<n; i++)
+        par.push_back(i);
+    
+    int groups = n;
+    for(int i=0; i<n; i++){
+        for(int j= i+1; j<n; j++){
+
+            if(isSimilar(A[i],A[j])){
+                int p1 = findPar(i);
+                int p2 = findPar(j);
+
+                if(p1 != p2){
+                    par[p2] = p1;
+                    groups--;
+                }
+            }
+        }
+    }
+    return groups;
 }
 
 int main(){

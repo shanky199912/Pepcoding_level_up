@@ -171,13 +171,12 @@ class l001{
         }
     }
 
-    static void BFS_02(int src, boolean[] vis){
+    static void BFS_01(int src, boolean[] vis){
         LinkedList<Pair> que = new LinkedList<>();
-        que.addLast(new Pair(src, ""));
-        que.addLast(null);
+        que.addLast(new Pair(src,  src + ""));
 
         int level =0;
-        int dest = 6;
+        int desti = 4;
 
         while(que.size()!=0){
 
@@ -189,54 +188,85 @@ class l001{
 			}
 
 			if(rvtx.vtx==desti){
-				System.out.println("destinantion: " + rvtx.psf + " -> " + level);
+				System.out.println("destinantion: " + rvtx.psf);
 			}
 			
 			vis[rvtx.vtx]=true;
 
             for(Edge e:graph[rvtx.vtx]){
                 if(!vis[e.v]){
-                    que.addLast(new Pair(e.v, rvtx.psf));
+                    que.addLast(new Pair(e.v, rvtx.psf + e.v));
                 }
             }
-
-            if(que.getFirst()==null){
-				level++;
-				que.removeFirst();
-				que.addLast(null);
-			}
         }
     }
 
-    static void BSF_03(int src, boolean[] vis){
+    // static void BFS_02(int src, boolean[] vis){
+    //     LinkedList<Pair> que = new LinkedList<>();
+    //     que.addLast(new Pair(src, ""));
+    //     que.addLast(null);
 
-        LinkedList<Pair> que = new LinkedList<>();
-        que.addLast(new Pair(src, src+" "));
-        que.addLast(null);
+    //     int level =0;
+    //     int dest = 6;
 
-        int dest = 6;
+    //     while(que.size()!=0){
+
+    //         Pair rvtx = que.removeFirst();
+
+    //         if(vis[rvtx.vtx]){
+	// 			System.out.println("Cycle: " + rvtx.psf);
+	// 			continue;
+	// 		}
+
+	// 		if(rvtx.vtx==desti){
+	// 			System.out.println("destinantion: " + rvtx.psf + " -> " + level);
+	// 		}
+			
+	// 		vis[rvtx.vtx]=true;
+
+    //         for(Edge e:graph[rvtx.vtx]){
+    //             if(!vis[e.v]){
+    //                 que.addLast(new Pair(e.v, rvtx.psf));
+    //             }
+    //         }
+
+    //         if(que.getFirst()==null){
+	// 			level++;
+	// 			que.removeFirst();
+	// 			que.addLast(null);
+	// 		}
+    //     }
+    // }
+
+    // static void BSF_03(int src, boolean[] vis){
+
+    //     LinkedList<Pair> que = new LinkedList<>();
+    //     que.addLast(new Pair(src, src+" "));
+    //     que.addLast(null);
+
+    //     int dest = 6;
         
-        while(que.size()!=0){
-            Pair rvtx = que.removeFirst();
+    //     while(que.size()!=0){
+    //         Pair rvtx = que.removeFirst();
 
-            if(vis[rvtx.vtx]){
-                System.out.println("Cycle: "+ rvtx.psf);
-                continue;
-            }
+    //         if(vis[rvtx.vtx]){
+    //             System.out.println("Cycle: "+ rvtx.psf);
+    //             continue;
+    //         }
 
-            if(rvtx.vtx == dest){
-                System.out.println("destination: " + rvtx.psf + "->" + rvtx.level);
-            }
+    //         if(rvtx.vtx == dest){
+    //             System.out.println("destination: " + rvtx.psf + "->" + rvtx.level);
+    //         }
 
-            vis[rvtx.vtx] = true;
+    //         vis[rvtx.vtx] = true;
 
-            for(Edge e: graph[rvtx.vtx]){
-                if(!vis[rvtx.vtx])
-                    que.addLast(new Pair(e.v, rvtx.psf + e.v, rvtx.level+1));
-            }
+    //         for(Edge e: graph[rvtx.vtx]){
+    //             if(!vis[rvtx.vtx])
+    //                 que.addLast(new Pair(e.v, rvtx.psf + e.v, rvtx.level+1));
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
     // static class Pair{
     //     int s;
@@ -356,6 +386,7 @@ class l001{
         // display(graph);
 
         boolean[] vis = new boolean[N];
+        BFS_01(0, vis);
         // System.out.println(hasPath(0, 6, vis));
         // System.out.println(printPath(0,6,0, vis,""));
         // System.out.println("---------------------");
@@ -366,6 +397,7 @@ class l001{
         // System.out.println("ciel path-:"+pair.cps+"@"+pair.ciel);
         // System.out.println("floor path-:"+pair.fps+"@"+pair.floor);
 
-        System.out.println(isBipartite(graph));
+        //System.out.println(isBipartite(graph));
+
     }
 }

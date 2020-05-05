@@ -199,4 +199,54 @@ class leetcode{
         }
         return length;
     }
+
+    //leetcode-839==================================================
+    int[] par;
+    
+    public int findPar(int vtx){
+
+        if(par[vtx] == vtx) return vtx;
+        return par[vtx] = findPar(par[vtx]);
+    }
+
+    public boolean isSimilar(String P, String Q){
+
+        int count = 0;
+        for(int i=0; i<P.length(); i++){
+
+            if(P.charAt(i) != Q.charAt(i) && ++count >2)
+                return false;
+        }
+        return true;
+    }
+
+    public int numSimilarGroups(String[] A) {
+
+        int n = A.length;
+        par = new int[n];
+        for(int i=0; i<n; i++) //O(N)
+            par[i] = i;
+
+        //int groups = n;
+        for(int i=0; i<n; i++){
+            for(int j= i+1; j<n; j++){ //O(N2)
+
+                if(isSimilar(A[i],A[j])){ //O(W) - W =  word length
+                    int p1 = findPar(i); //O(4) - findPar at max takes O(4) time
+                    int p2 = findPar(j); // as the height of tree can be at max 4.
+
+                    if(p1 != p2){
+                        par[p2] = p1;
+                        //groups--;
+                    }
+                }
+            }
+        }
+        
+        int groups = 0;
+        for(int i=0; i<n; i++){
+            if(par[i] == i) groups++;
+        }
+        return groups;
+    }
 }
