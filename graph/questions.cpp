@@ -1,8 +1,9 @@
 #include<iostream>
 #include<vector>
 #include<queue>
+#include<algorithm>
 
-using namespace std;
+ using namespace std;
 
 vector<vector<int>> dir = {{0, 1}, {-1, 0}, {0, -1}, {1, 0}};
 bool isSafe(int r, int c, int m, int n, vector<vector<char>>& board){
@@ -920,6 +921,157 @@ int numSimilarGroups(vector<string>& A) {
     return groups;
 }
 
+//leetcode-695=====================================
+int maxAreaOfIsland(vector<vector<int>>& grid) {
+    
+    if(grid.size() == 0 || grid[0].size() == 0)  return 0;
+    int n = grid.size();
+    int m = grid[0].size();
+    
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            par.push_back(i*m + j);   // 2d to 1d.
+        }
+    }
+
+    int maxArea = 0;
+    bool hasOne = false;
+    for(int i=0; i<n; i++){
+        for(int j=0; j<m; j++){
+            if(grid[i][j] == 1){
+
+                if(i+1 <n && grid[i+1][j] == 1){
+
+                    hasOne = true;
+                    int p1 = findPar(i*m + j);
+                    int p2 = findPar((i+1)*m + j);
+
+                    if(p1 != p2){
+                        par[p2] = p1;
+                        maxArea++;
+                    }
+                }
+
+                if(j+1 <m && grid[i][j+1] == 1){
+                    
+                    hasOne = true;
+                    int p1 = findPar(i*m + j);
+                    int p2 = findPar(i*m + j+1);
+
+                    if(p1 != p2){
+                        par[p2] = p1;
+                        maxArea++;
+                    }
+                }
+            }
+        }
+    }
+
+    return (hasOne) ? maxArea + 1 : maxArea;
+}
+
+//leetcode-optimize-water-in village.
+vector<int> par;
+vector<long long> setSize;
+
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+int optimizeWaterDistributionInVillage(int n, vector<int> &wells, vector<vector<int>>& pipes){
+
+    for(int i=0; i<wells.size(); i++){
+        pipes.push_back({0, (i+1), wells[i]});
+        par.push_back(i);
+    }
+
+    par.push_back(wells.size()); // leetcode pe indexing 1 se shuru kri hai. but humne 0 se , lekin hum apne loop me <= tak nhi chla skte vrna error de dega
+    // issliye yahan last index push back kr dia..
+
+    sort(pipes.begin(), pipes.end(), [](vector<int>& a, vector<int>& b){
+        return a[2] < b[2]; // lambda expression -> java me a[2] - b[2];
+    });
+
+    int cost = 0;
+    for(vector<int>& ar: pipes){
+
+        int p1 = findPar(ar[0]);
+        int p2 = findPar(ar[1]);
+
+        if(p1 != p2){
+            cost += ar[2];
+            par[p1] = p2;
+        }
+    }
+
+    return cost;
+}
+
+//hackerEarth- https://www.hackerearth.com/practice/algorithms/graphs/minimum-spanning-tree/practice-problems/algorithm/mr-president/
+vector<int> par;
+vector<long long> setSize;
+
+int findPar(int vtx){
+
+    if(par[vtx] == vtx) return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+int mrPresident(){
+
+    int n,m,k;
+    cin>> n >> m >> k;
+
+    vector<vector<int>> graph, kruskalGraph;
+
+    while(m--){
+
+        int u, v, w;
+        cin>> u>> v >> w;
+
+        vector<int> ar;
+        ar.push_back({u,v,w});
+        graph.push_back(ar);
+    }
+
+    for(int i=0; i<=n; i++){
+        par.push_back(i);
+    }
+
+    int MstCost = 0;
+    for(vector<int> gp: graph){
+
+        int p1 = findPar(gp[0]);
+        int p2 = findPar(gp[1]);
+
+        if(p1 != p2){
+            par[p2] = p1;
+            MstCost = gp[2];
+            kruskalGraph.push_back(gp);
+        }
+    }
+
+    int component = 0;
+    for(int i=1; i<=n; i++) if(par[i] == i && ++component >1 ) return -1;
+
+    int roads = 0;
+    for(int i= kruskalGraph.size()-1; i>=0; i--){
+        if(MstCost < k){
+            break;
+        }
+
+        MstCost = MstCost - kruskalGraph[i][2] + 1;
+        roads ++;
+    }
+
+    return MstCost < k ? roads : -1;
+}
+
 int main(){
 
+    // int n =3;
+    // vector<vector<int>> pipes = {{1,2,1},{2,3,1}};
+    // vector<int> wells = {1,2,2};
+    // cout<<optimizeWaterDistributionInVillage(n,wells,pipes);
 }

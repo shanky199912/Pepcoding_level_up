@@ -489,6 +489,46 @@ void isBipartite(){
     }
 }
 
+vector<int> par;
+vector<int> setSize;
+
+int findPar(int vtx){
+    if(par[vtx] == vtx)
+        return vtx;
+    return par[vtx] = findPar(par[vtx]); //Path Compression -> overall parent nikal rhe h.
+}
+
+void mergeSet(int l1, int l2){
+    if(setSize[l1] < setSize[l2]){
+
+        par[l1] = l2;
+        setSize[l2] += setSize[l1];
+    }
+    else{
+        par[l2] = l1;
+        setSize[l1] += setSize[l2];
+    }
+}
+
+void kruskalsAlgo(vector<vector<int>>& arr){
+
+    vector<vector<Edge*>> Kgraph(arr.size(), vector<Edge*>());
+    
+    for(vector<int> &ar: arr){
+
+        int u = arr[0];
+        int v = ar[1];
+
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+
+        if(p1 != p2){
+            mergeSet(p1, p2);
+            addEdge()
+        }
+    }
+}
+
 void contsructgraph(){
 
     addEdge(graph,0,1,10);
