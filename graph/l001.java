@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 class l001{
     public static void main(String[] args){
@@ -32,7 +33,7 @@ class l001{
     public static void display(ArrayList<Edge>[] gp){
         for(int i=0; i<N; i++){
             System.out.print(i+" -> ");
-            for(Edge e: graph[i]){
+            for(Edge e: gp[i]){
                 System.out.print("(" + e.v + "," + e.w + ")" + ", ");
             }
             System.out.println();
@@ -154,52 +155,52 @@ class l001{
         return ;
     }
 
-    static class Pair{
-        int vtx;
-        String  psf;
-        int level;
+    // static class Pair{
+    //     int vtx;
+    //     String  psf;
+    //     int level;
 
-        Pair(int vtx, String psf){
-            this.vtx = vtx;
-            this.psf = psf;
-        }
+    //     Pair(int vtx, String psf){
+    //         this.vtx = vtx;
+    //         this.psf = psf;
+    //     }
 
-        Pair(int vtx, String psf, int level){
-            this.vtx = vtx;
-            this.psf = psf;
-            this.level = level;
-        }
-    }
+    //     Pair(int vtx, String psf, int level){
+    //         this.vtx = vtx;
+    //         this.psf = psf;
+    //         this.level = level;
+    //     }
+    // }
 
-    static void BFS_01(int src, boolean[] vis){
-        LinkedList<Pair> que = new LinkedList<>();
-        que.addLast(new Pair(src,  src + ""));
+    // static void BFS_01(int src, boolean[] vis){
+    //     LinkedList<Pair> que = new LinkedList<>();
+    //     que.addLast(new Pair(src,  src + ""));
 
-        int level =0;
-        int desti = 4;
+    //     int level =0;
+    //     int desti = 4;
 
-        while(que.size()!=0){
+    //     while(que.size()!=0){
 
-            Pair rvtx = que.removeFirst();
+    //         Pair rvtx = que.removeFirst();
 
-            if(vis[rvtx.vtx]){
-				System.out.println("Cycle: " + rvtx.psf);
-				continue;
-			}
+    //         if(vis[rvtx.vtx]){
+	// 			System.out.println("Cycle: " + rvtx.psf);
+	// 			continue;
+	// 		}
 
-			if(rvtx.vtx==desti){
-				System.out.println("destinantion: " + rvtx.psf);
-			}
+	// 		if(rvtx.vtx==desti){
+	// 			System.out.println("destinantion: " + rvtx.psf);
+	// 		}
 			
-			vis[rvtx.vtx]=true;
+	// 		vis[rvtx.vtx]=true;
 
-            for(Edge e:graph[rvtx.vtx]){
-                if(!vis[e.v]){
-                    que.addLast(new Pair(e.v, rvtx.psf + e.v));
-                }
-            }
-        }
-    }
+    //         for(Edge e:graph[rvtx.vtx]){
+    //             if(!vis[e.v]){
+    //                 que.addLast(new Pair(e.v, rvtx.psf + e.v));
+    //             }
+    //         }
+    //     }
+    // }
 
     // static void BFS_02(int src, boolean[] vis){
     //     LinkedList<Pair> que = new LinkedList<>();
@@ -361,6 +362,185 @@ class l001{
         return true;
     }
 
+    // union-find
+    // static int[] par;
+    // static int[] setSize;
+
+    // int findPar(int vtx){
+        
+    //     if(par[vtx] == vtx) return vtx;
+    //     return par[vtx] = findPar(par[vtx]);
+    // }
+
+    // void mergeSet(int l1, int l2){
+    //     if(setSize[l1] < setSize[l2]){
+    //         par[l1] = l2;
+    //         setSize[l2] += setSize[l1];
+    //     }
+    //     else{
+    //         par[l2] = l1;
+    //         setSize[l1] += setSize[l2];
+    //     }
+    // }
+    // //now we can use this in our questions...
+    // //leetcode-684
+    // public int[] findRedundantConnection(int[][] edges) {
+        
+    //     int n = edges.length;
+    //     par = new int[n];
+    //     setSize = new int[n];
+
+    //     for(int i=0; i<=n; i++) par[i] = i; setSize[i] = 1;
+
+    //     for(int[] ar: edges){
+
+    //         int p1 = findPar(ar[0]);
+    //         int p2 = findPar(ar[1]);
+
+    //         if(p1 != p2) mergeSet(p1, p2);
+    //         else
+    //             return ar;
+    //     }
+
+    //     return new int[]{};
+    // }
+
+    // //leetcode-547 - famous question hai.
+    // public int findCircleNum(int[][] M) {
+        
+    //     if(M.length == 0) return 0;
+        
+    //     int n = M.length;
+    //     int m = M[0].length;
+    //     par = new int[n];
+
+    //     for(int i=0; i<n; i++) par[i] = i;
+
+    //     countFc = n;
+    //     for(int i=0; i<n; i++){
+    //         for(int j=0; j<m; j++){
+    //             if(M[i][j] == 1 && i !=j){
+
+    //                 int p1 = findPar(i);
+    //                 int p2 = findPar(j);
+
+    //                 if(p1 != p2){ 
+    //                     par[p2] = p1;
+    //                     countFc--;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return countFc;
+    // }
+
+    public static class dpair{
+            int src;
+            int parent;
+            int w;
+            int wsf;
+    
+            dpair(int src, int parent, int w, int wsf){
+                this.src = src;
+                this.parent = parent;
+                this.w= w;
+                this.wsf = wsf;
+            }
+    }
+    
+    static void dijikstraAlgo(int src){
+        
+        ArrayList<Edge>[] dkgraph = new ArrayList[N];
+        for(int i=0; i<N; i++){
+            dkgraph[i] = new ArrayList<Edge>();
+        }
+
+        PriorityQueue<dpair> pq = new PriorityQueue<>((dpair a, dpair b)->{
+            return a.wsf - b.wsf; //min pq (by default);
+            //return b.wsf - a.wsf ; //max pq
+        });
+
+        boolean[] vis = new boolean[N];
+        pq.add(new dpair(src, -1, 0, 0));
+    
+        while(pq.size() !=0){
+            int size = pq.size();
+            while(size-- >0){
+                dpair vtx = pq.poll();
+                
+                if(vis[vtx.src]){
+                    continue;
+                }
+
+                if(vtx.parent != -1){
+                    addEdge(dkgraph, vtx.src, vtx.parent, vtx.w);
+                }
+    
+                vis[vtx.src] = true;
+    
+                for(Edge e: graph[vtx.src]){
+                    if(!vis[e.v])
+                        pq.add(new dpair(e.v, vtx.src, e.w, vtx.wsf + e.w));
+                }
+            }
+        }
+
+        display(dkgraph);
+    }
+
+    public static class ppair{
+        int src;
+        int parent;
+        int w;
+
+        ppair(int src, int parent, int w){
+            this.src = src;
+            this.parent = parent;
+            this.w= w;
+        }
+}
+
+    static void primsAlgo(int src){
+
+        ArrayList<Edge>[] pGraph = new ArrayList[N];
+        for(int i=0; i<N; i++){
+            pGraph[i] = new ArrayList<Edge>();
+        }
+    
+        PriorityQueue<ppair> pq = new PriorityQueue<>((ppair a, ppair b)->{
+            return a.w - b.w; //min pq (by default);
+            //return b.wsf - a.wsf ; //max pq
+        });
+
+        boolean[] vis = new boolean[N];
+        pq.add(new ppair(src, -1, 0));
+    
+        while(pq.size() !=0){
+            int size = pq.size();
+            while(size-- >0){
+                ppair vtx = pq.poll();
+                
+                if(vis[vtx.src]){
+                    continue;
+                }
+
+                if(vtx.parent != -1){
+                    addEdge(pGraph, vtx.src, vtx.parent, vtx.w);
+                }
+    
+                vis[vtx.src] = true;
+    
+                for(Edge e: graph[vtx.src]){
+
+                    if(!vis[e.v])
+                        pq.add(new ppair(e.v, vtx.src, e.w));
+                }
+            }
+        }
+
+        display(pGraph);
+    }
+    
     public static void constructgraph(){
 
         graph = new ArrayList[N];
@@ -368,16 +548,16 @@ class l001{
             graph[i] = new ArrayList<Edge>();
         }
 
-        addEdge(graph, 0, 1, 10);
+        addEdge(graph, 0, 1, 20);
         addEdge(graph, 1, 2, 10);
         addEdge(graph, 2, 3, 40);
-        addEdge(graph, 0, 3, 10);
+        addEdge(graph, 0, 3, 20);
         addEdge(graph, 3, 4, 2);
         addEdge(graph, 4, 5, 6);
         addEdge(graph, 4, 6, 8);
         addEdge(graph, 5, 6, 3);
 
-        display(graph);
+        // display(graph);
 
         // removeEdge(3, 4);
         // display(graph);
@@ -386,7 +566,7 @@ class l001{
         // display(graph);
 
         boolean[] vis = new boolean[N];
-        BFS_01(0, vis);
+        // BFS_01(0, vis);
         // System.out.println(hasPath(0, 6, vis));
         // System.out.println(printPath(0,6,0, vis,""));
         // System.out.println("---------------------");
@@ -398,6 +578,11 @@ class l001{
         // System.out.println("floor path-:"+pair.fps+"@"+pair.floor);
 
         //System.out.println(isBipartite(graph));
+
+        // primsAlgo(0);
+        // primsAlgo(6);
+        dijikstraAlgo(2);
+        
 
     }
 }

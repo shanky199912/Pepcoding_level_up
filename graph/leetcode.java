@@ -2,34 +2,36 @@ import java.util.*;
 
 class leetcode{
     
-    static string calldfs(int r, int c, int n, int m,int[][] board){
-
-        if(board[r][c]!=1) return "";
+     //number of distinct islands
+    static string calldfs(int r, int c, int n, int m, int[][] board){
 
         board[r][c] = 2;
         String s = "";
-        if(r-1>=0){
+        if(r-1>=0 && board[r][c]==1){
             s = s +"t";
             s = s + calldfs(r-1,c,n,m, board);
-            s = s +"t";
+            s = s +"b";
         }
-        if(c-1>=0){
+        if(c-1>=0 && board[r][c]==1){
             s = s +"l";
-            s += calldfs(r,c-1,n,m,str+"l", board);
+            s += calldfs(r,c-1,n,m, board);
+            s = s + "b";
         }
-        if(r+1<n){
+        if(r+1<n && board[r][c]==1){
             s = s +"d";
-            s +=calldfs(r+1,c,n,m,str+"d", board);
+            s +=calldfs(r+1,c,n,m,board);
+            s = s + "b";
         }
-        if(c+1<m){
+        if(c+1<m && board[r][c]==1){
             s = s +"r";
-            s += calldfs(r,c+1,n,m,str+"r", board);
+            s += calldfs(r,c+1,n,m, board);
+            s = s + "b";
         }
 
         return s;
     }
     
-    static void distinctIslands(int[][] board){
+    static int distinctIslands(int[][] board){
 
         int n = board.length;
         int m = board[0].length;
@@ -40,15 +42,18 @@ class leetcode{
 
                 if(board[i][j] == 1){
 
-                    String str = calldfs(i, j,n,m, "",board);
+                    String str = calldfs(i, j,n,m, board);
                     
                     for(String rr: list){
-                        if(!list.contains(str))
+                        if(!list.contains(str)){
                             list.add(str);
+                        }
                     }
                 }
             }
         }
+
+        return list.size();
     }
     
     //1091=========================================
@@ -249,4 +254,53 @@ class leetcode{
         }
         return groups;
     }
+
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int K) {
+        
+        ArrayList<int[]>[] graph = new ArrayList[n];
+        for(int i=0; i<n; i++){
+            graph[i] = new ArrayList<int[]>();
+        }
+        
+        for(int[] ar: flights){
+            graph[ar[0]].add(new int[]{ar[1],ar[2]});
+        }
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((int[] a, int[] b)->{
+            return a[0]- b[0];
+        });
+
+        boolean[] vis = new boolean[n];
+        pq.add(new int[]{0,src,0}); //weigth, vertex, stop
+        int min = (int)1e7;
+
+        while(pq.size()!=0){
+            int size = pq.size();
+            while(size-- >0){
+                int[] vtx = pq.poll();
+
+                if(vtx[1] == dst){
+                    if(vtx[0] < min){
+                        min = vtx[0];
+                    }
+                }
+
+                vis[vtx[1]] = true;
+
+                if(vtx[2] > K)
+                    continue;
+
+                for(int[] e : graph[vtx[1]]){
+                    if(!vis[e[0]]){
+                        pq.add(new int[]{vtx[0] + e[1], e[0], vtx[2] + 1});
+                    }
+                }
+            }
+        }
+
+        if(min == (int)1e7)return -1;
+        else return min;
+    }
+
+    //number of distinct islands
 }

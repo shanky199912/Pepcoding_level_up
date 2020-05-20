@@ -166,14 +166,6 @@ class l002_directed{
         }
     }
 
-    
-
-    // public int numBusesToDestination(int[][] routes, int S, int T) {
-        
-    //     HashMap<Integer,int[]> map = new HashMap<>();
-        
-    //     for(int i=0; i<)
-    // }
 
     public static void constructgraph(){
 

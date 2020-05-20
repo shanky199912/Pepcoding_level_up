@@ -827,7 +827,7 @@ string smallestString(string A, string B, strring S){
     return ans;
 }
 
-//leetcode -200
+//leetcode -200=========================================
 vector<int> par;
 vector<long long> setSize;
 
@@ -1067,6 +1067,82 @@ int mrPresident(){
 
     return MstCost < k ? roads : -1;
 }
+
+//leetcode -743======================================================
+class Edge{
+public:
+    int v = 0;
+    int w = 0;
+
+    Edge(int v, int w){
+        this->v = v;
+        this->w = w;
+
+    }
+};
+
+class dpair{
+    public:
+        int src;
+        int parent;
+        int w;
+        int wsf;
+
+        dpair(int src, int parent, int w, int wsf){
+            this-> src = src;
+            this->parent = parent;
+            this->w= w;
+            this->wsf = wsf;
+        }
+};
+
+struct Dcomp{
+    public:
+        bool operator()(dpair &p1, dpair &p2){
+            return p1.wsf > p2.wsf;  //default behavior (this - other) - max.
+            // return p2.wsf > p1.wsf;
+        }
+};
+
+int networkDelayTime(vector<vector<int>>& times, int N, int K) {
+
+    vector<vector<Edge*>> dkgraph(N, vector<Edge*>());
+    for(vector<int>& ar: times){
+        dkgraph[ar[0]].push_back(new Edge(ar[0], ar[1]));
+    }
+
+    priority_queue<dpair, vector<dpair>, Dcomp> pq;
+    vector<bool> vis(N, false);
+    pq.push(dpair(K, -1, 0, 0));
+
+    int time = 0;
+    while(pq.size() !=0){
+        int size = pq.size();
+        while(size-- >0){
+            dpair vtx = pq.top(); pq.pop();
+
+            if(vis[vtx.src])
+                continue;
+
+            vis[vtx.src] = true;
+
+            time = vtx.wsf;
+
+            for(Edge* e: dkgraph[vtx.src]){
+                if(!vis[e->v])
+                    pq.push(dpair(e->v, vtx.src, e->w, vtx.wsf + e->w));
+            }
+        }
+    }
+
+    for(int i=0; i<vis.size(); i++){
+        if(!vis[i])
+            return -1;
+    }
+
+    return time;    
+}
+
 
 int main(){
 

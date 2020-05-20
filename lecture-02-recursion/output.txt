@@ -1,7 +1,3 @@
-abc
-acb
-bac
-bca
-cab
-cba
-6
+divyam
+coding
+2

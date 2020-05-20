@@ -1,6 +1,7 @@
 #include<iostream>
 #include<vector>
 #include<queue>
+#include<algorithm>
 
 using namespace std;
 
@@ -510,29 +511,132 @@ void mergeSet(int l1, int l2){
     }
 }
 
-void kruskalsAlgo(vector<vector<int>>& arr){
+// void kruskalsAlgo(vector<vector<int>>& arr){
 
-    vector<vector<Edge*>> Kgraph(arr.size(), vector<Edge*>());
+//     vector<vector<Edge*>> Kgraph(arr.size(), vector<Edge*>());
     
-    for(vector<int> &ar: arr){
+//     for(vector<int> &ar: arr){
 
-        int u = arr[0];
-        int v = ar[1];
+//         int u = arr[0];
+//         int v = ar[1];
 
-        int p1 = findPar(u);
-        int p2 = findPar(v);
+//         int p1 = findPar(u);
+//         int p2 = findPar(v);
 
-        if(p1 != p2){
-            mergeSet(p1, p2);
-            addEdge()
+//         if(p1 != p2){
+//             mergeSet(p1, p2);
+//             addEdge()
+//         }
+//     }
+// }
+
+class dpair{
+    public:
+        int src;
+        int parent;
+        int w;
+        int wsf;
+
+        dpair(int src, int parent, int w, int wsf){
+            this-> src = src;
+            this->parent = parent;
+            this->w= w;
+            this->wsf = wsf;
+        }
+};
+
+struct Dcomp{
+    public:
+        bool operator()(dpair &p1, dpair &p2){
+            return p1.wsf > p2.wsf;  //default behavior (this - other) - max.
+            // return p2.wsf > p1.wsf;
+        }
+};
+
+void dijikstraAlgo(int src){
+
+    vector<vector<Edge*>> dkgraph(N, vector<Edge*>());
+
+    priority_queue<dpair, vector<dpair>, Dcomp> pq;
+    vector<bool> vis(N, false);
+    pq.push(dpair(src, -1, 0, 0));
+
+    while(pq.size() !=0){
+        int size = pq.size();
+        while(size-- >0){
+            dpair vtx = pq.top(); pq.pop();
+
+            if(vis[vtx.src])
+                continue;
+
+            if(vtx.parent != -1)
+                addEdge(dkgraph, vtx.src, vtx.parent, vtx.w);
+
+            vis[vtx.src] = true;
+
+            for(Edge* e: graph[vtx.src]){
+                if(!vis[e->v])
+                    pq.push(dpair(e->v, vtx.src, e->w, vtx.wsf + e->w));
+            }
         }
     }
+
+    display(dkgraph);
 }
 
+class ppair{
+    public:
+        int src;
+        int parent;
+        int w;
+
+        ppair(int src, int parent, int w){
+            this->src = src;
+            this->parent  = parent;
+            this->w = w;
+        }
+};
+
+struct Pcomp{
+    public:
+        bool operator()(ppair &p1, ppair &p2){
+            return p1.w > p2.w; 
+        }
+};
+
+void PrimsAlgo(int src){
+
+    vector<vector<Edge *>> Pgraph(N, vector<Edge *>());
+
+    priority_queue<ppair, vector<ppair>, Pcomp> pq;
+    pq.push(ppair(src, -1, 0));
+    vector<bool> vis(N, false);
+
+    while(pq.size() != 0){
+        int size = pq.size();
+        while(size-- >0){
+            ppair rvtx = pq.top();
+            pq.pop();
+
+            if(vis[rvtx.src])
+                continue;
+            
+            if(rvtx.parent != -1)
+                addEdge(Pgraph, rvtx.src, rvtx.parent, rvtx.w);
+            
+            vis[rvtx.src] = true;
+
+            for(Edge * e : graph[rvtx.src])
+                if(!vis[e->v])
+                    pq.push(ppair(e->v, rvtx.src, e->w));
+        }
+    }
+    display(Pgraph);
+}
 void contsructgraph(){
 
-    addEdge(graph,0,1,10);
-    addEdge(graph,1,2,10);
+    addEdge(graph,0,1,20);
+    addEdge(graph,1,2,20);
     addEdge(graph,0,3,10);
     addEdge(graph,2,3,40);
     addEdge(graph,3,4,2);
@@ -543,6 +647,7 @@ void contsructgraph(){
 
     display(graph);
 }
+
 void questions(){
     // removeEdge(3,4);
     // display(graph);
@@ -567,12 +672,16 @@ void questions(){
     // BFS_05(0,vis);
     // BFS_04(0, vis);
     // cout<<(boolalpha)<<isConnected()<<endl;
-    vector<string> ans = gcc();
-    for(string val: ans){
-        cout<<val<<" ";
-    }
-    cout<<endl;
+    // vector<string> ans = gcc();
+    // for(string val: ans){
+    //     cout<<val<<" ";
+    // }
+    // cout<<endl;
     //cout<<(boolalpha)<<isBipartite_02()<<endl;
+
+    dijikstraAlgo(2);
+    PrimsAlgo(2);
+    PrimsAlgo(6);
 }
 
 int main(){

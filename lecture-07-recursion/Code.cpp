@@ -132,26 +132,74 @@ int nqueens_03(int m, int n, int tnq, string asf, int cqpi){
     return count;
 }
 
-//sudoku
-bool isSafeToPlaceNumber(vector<vector<int>> &board, int row, int col, int num){
+vector<vector<string>> ans;
+vector<string> res;
+    
+    void printboard(vector<vector<bool>> board){
+        res.clear();
+        for(int i=0; i<board.size(); i++){
+            string str = "";
+            for(int j=0; j<board.size(); j++){
+                if(board[i][j] == true){
+                    str += "Q";
+                }
+                else{
+                    str += ".";
+                }
+            }
+            res.push_back(str);
+        }
+        ans.push_back(res);
+    }
+    
+    bool isQueenSafee(vector<vector<bool>> board , int row, int col){
 
-    //row ka check
-    for(int i=0;i<board[0].size();i++){
-        if(board[row][i] == num)
-            return false;
-    }   
+        vector<vector<int>> dir = {{0,-1},{-1,-1},{-1,0},{-1,1}};
 
-    //col ka check
-    for(int j=0;j<board.size();j++){
-        if(board[j][col] == num)
-            return false;
+        for(int d = 0;d<dir.size();d++){
+            for(int rad = 1;rad<=board.size();rad ++){
+
+                int r = row + rad* dir[d][0];
+                int c = col + rad* dir[d][1];
+
+                if(r>=0 && c>=0 && r<board.size() && c<board[0].size()){
+                    if(board[r][c])
+                        return false;
+                }
+                else
+                    break;
+            }
+        }
+        return true;
+    }
+    
+    int nqueenss_01(vector<vector<bool>>& board, int tnq, int cqpi){
+        if(tnq == 0){
+            // printboard(board);
+            return 1;
+        }
+        int count = 0;
+        for(int b=cqpi + 1; b<board.size() * board.size(); b++){
+
+            int row = b/board.size();
+            int col = b%board.size();
+
+            if(isQueenSafee(board,row,col)){
+                board[row][col] = true;
+                count += nqueenss_01(board, tnq-1, b);
+                board[row][col] = false;
+            }
+        }
+        return count;
     }
 
-    //sub matrix ka check
-    for(int i=0;i<sqrt(board.size());i++){
-
+    vector<vector<string>> solveNQueens(int n) {
+        
+        vector<vector<bool>> board(n, vector<bool>(n, false));
+        nqueenss_01(board,n,-1);
+        return ans;
     }
-}
+    
 
 void solve(){
     int n =4;
@@ -164,9 +212,18 @@ void solve(){
     // diag.resize(N,false);
     // adiag.resize(N,false);
     // in java use -> rowA = new boolean[]; -> and just declare the static array above.
-   // cout<<nqueens(board,4,"",-1)<<endl;
-   cout<<nqueens_03(N,M,4,"",-1)<<endl;
-   cout<<nqueens_02(board,4,"",-1)<<endl;
+//    cout<<nqueens_01(board,4,"",-1)<<endl;
+   cout<<nqueenss_01(board,4,-1);
+//    cout<<nqueens_03(N,M,4,"",-1)<<endl;
+//    cout<<nqueens_02(board,4,"",-1)<<endl;
+
+//    vector<vector<string>> ans = solveNQueens(4);
+//    for(int i=0; i<ans.size(); i++){
+//        for(int j=0; j<ans[0].size(); j++){
+//            cout<<ans[i][j] + " ";
+//        }
+//        cout<<endl;
+//    }
 
 }
 int main(){
