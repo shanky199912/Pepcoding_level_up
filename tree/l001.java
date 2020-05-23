@@ -140,8 +140,223 @@ public class l001{
         
     }
 
+    public static ArrayList<Node> rootToNodePath_02(Node root,int data){
+        
+        if(root==null){
+            return new ArrayList<>();
+        }
+        
+        if(root.data==data){
+            ArrayList<Node> base=new ArrayList<>();
+            base.add(root);
+            return base;
+        }
+  
+        ArrayList<Node> left=rootToNodePath_02(root.left,data);
+        if(left.size()!=0){
+            left.add(root);
+            return left;
+        }
+   
+        ArrayList<Node> right=rootToNodePath_02(root.right,data);
+        if(right.size()!=0){
+            right.add(root);
+            return right;
+        }
+        
+        return new ArrayList<>();
+    }
+
+    public Node lowestCommonAncestor(Node root, int p, int q) {
+        ArrayList<Node> path1=new ArrayList<>();
+        ArrayList<Node> path2=new ArrayList<>();
+        
+        rootToNodePath_(root,p,path1);
+        rootToNodePath_(root,q,path2);
+
+        Node prev=null;
+        int i=path1.size()-1;
+        int j=path2.size()-1;
+        
+        while(i>=0 && j>=0){
+          if(path1.get(i).data!=path2.get(j).data) break;
+          
+          prev=path1.get(i);
+          i--;
+          j--;
+        }
+
+        return prev;
+    }
+
+    static Node LCA = null;
+    public static boolean lowestCommonAncestor_02(Node root, int p, int q){
+
+        if(root == null) return false;
+
+        boolean selfNode = false;
+        if(root.data == p || root.data == q){
+            selfNode = true;
+        }
+
+        boolean leftNode = lowestCommonAncestor_02(root.left, p, q);
+        if(LCA != null) return true;
+
+        boolean rightNode = lowestCommonAncestor_02(root.right, p, q);
+        if(LCA != null) return true;
+
+        if((selfNode && leftNode) || (selfNode && rightNode) || (leftNode && rightNode)){
+            LCA = root;
+        }
+
+        return selfNode || leftNode || rightNode ;
+    }
+
+    public static void kDown(Node root,int level,Node blockNode){
+        if(root==null || root==blockNode) return;
+ 
+        if(level==0){
+          System.out.print(root.data + " ");
+          return;  
+        }
+ 
+        kDown(root.left,level-1,blockNode);
+        kDown(root.right,level-1,blockNode);
+ 
+     }
+ 
+     public static void allNodeKAway(Node root, int target, int K) {
+         ArrayList<Node> path=new ArrayList<>();
+         rootToNodePath_(root,target,path);
+ 
+         Node blockNode=null;
+         for(int i=0;i<path.size();i++){
+             if(K-i<0) break;
+             kDown(path.get(i),K-i,blockNode);
+             blockNode=path.get(i);
+         }
+     }
+     
+     public static int allNodeKAway_02_(Node root, int target, int K) {
+          if(root==null) return -1;
+ 
+          if(root.data == target){
+             kDown(root,K,null);
+             return 1;
+          }
+ 
+          int leftdistance=allNodeKAway_02_(root.left,target,K);
+          if(leftdistance!=-1){
+             if(K-leftdistance >= 0) kDown(root,K-leftdistance,root.left);
+             return leftdistance+1;
+          }
+          
+          int rightdistance=allNodeKAway_02_(root.right,target,K);
+           if(rightdistance!=-1){
+             if(K-rightdistance >= 0) kDown(root,K-rightdistance,root.right);
+             return rightdistance+1;
+         }
+ 
+         return -1;
+     
+     }
+ 
+     public static void kDown(Node root,int level){
+         if(root==null) return;
+  
+         if(level==0){
+           System.out.print(root.data + " ");
+           return;  
+         }
+  
+         kDown(root.left,level-1);
+         kDown(root.right,level-1);
+  
+      }
+ 
+     public static int allNodeKAway_03_(Node root, int target, int K) {
+        if(root==null) return -1;
+ 
+        if(root.data == target){
+            kDown(root,K,null);
+            return 1;
+        }
+ 
+        int leftdistance=allNodeKAway_03_(root.left,target,K);
+        if(leftdistance!=-1){
+            if(K-leftdistance == 0)  
+               System.out.print(root.data + " ");
+            else
+               kDown(root.right,K-leftdistance-1);
+            return leftdistance+1;
+        }
+         
+        int rightdistance=allNodeKAway_03_(root.right,target,K);
+        if(rightdistance!=-1){
+            if(K-rightdistance == 0)
+                System.out.print(root.data + " ");
+            else
+                kDown(root.left,K-rightdistance-1);
+            return rightdistance+1;
+        }
+ 
+        return -1;
+    
+    }
+ 
+    public static int diameter_01(Node node){
+        if(node==null) return 0;
+ 
+        int ld=diameter_01(node.left);
+        int rd=diameter_01(node.right);
+ 
+        int lh=height(node.left);
+        int rh=height(node.right);
+ 
+        int myDia = lh + rh + 2;
+        return Math.max(Math.max(ld,rd), myDia);
+    }
+ 
+    public static class diaPair{
+        int dia=0;
+        int hei=0;
+ 
+        diaPair(int dia,int hei){
+            this.dia=dia;
+            this.hei=hei;
+        }
+    }
+ 
+    public static diaPair diameter_02(Node node){
+        if(node==null) return new diaPair(0,-1) ;
+    
+        diaPair lr=diameter_02(node.left); // left result
+        diaPair rr=diameter_02(node.right); // right result
+    
+        diaPair myRes=new diaPair(0,-1);
+        myRes.dia = Math.max(Math.max(lr.dia,rr.dia), (lr.hei+rr.hei+2));
+        myRes.hei = Math.max(lr.hei,rr.hei)+1;
+        
+        return myRes;
+    }
+ 
+    static int diameter=0;
+    public static int diameter_03(Node node){
+        if(node==null) return -1 ;
+    
+        int lh = diameter_03(node.left); // left height
+        int rh =diameter_03(node.right); // right height
+        
+        diameter=Math.max(diameter,lh+rh+2);
+        return Math.max(lh,rh)+1;
+    }
+
     public static void set1(Node root, int data){
         rootToNodePath(root, data);
+        lowestCommonAncestor_02(root, 20,30);
+        if(LCA != null)
+            System.out.println(-1);
+        System.out.println("lca :" + LCA.data);
     }
 
    public static void solve(){
