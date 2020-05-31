@@ -692,19 +692,47 @@ public class l001{
 
     }
 
-    static Node succs = null;
-    static Node predess = null;
-    public static void inorderSuccessor_Predecessor(Node node, int data){
-        if(node == null) return;
-
-        inorderSuccessor_Predecessor(node.left, data);
-        if(node.data == data){
-            System.out.println(predess.data);
-        }else{
-            predess = node;
-        }
-        inorderSuccessor_Predecessor(node.right, data);
+    //yeh mera ek all solution hai jisme ki humne size , height , find and preddecssor and successor sab kr rkha hai.
+    public static class allSolution{
+        int height = 0;
+        int size=0;
+        boolean find=false;
+ 
+        Node pred=null;
+        Node succ=null;
+        Node prev=null;
     }
+    
+    //agar abb hume kisi ka bhi preddess and suuccs pucha jayega to bss hum yeh dekhenge ki kis order me pucha hai.
+    //agar inorder ka pucha hai to inorder me code kr denge else preorder ya postorder me respectively.
+    public static void allSol(Node node,int data,int level,allSolution pair){
+        if(node==null) return;
+        pair.size++;
+        pair.height=Math.max(pair.height,level);
+        pair.find= pair.find || node.data==data;
+        
+        if(node.data==data && pair.pred==null) pair.pred = pair.prev; //predecessor
+        if(pair.prev!=null && pair.prev.data == data && pair.succ==null) pair.succ=node; //succesor
+        pair.prev=node;
+
+        allSol(node.left,data,level+1,pair);
+        allSol(node.right,data,level+1,pair);
+    }
+
+    public static void inorderSuccessor_Predecessor(Node node, int data, allSolution pair){
+        if(node == null) return;
+        
+        inorderSuccessor_Predecessor(node.left, data, pair);
+        //here we will do our work -> kyunki inorder pucha tha issliye.
+        //predecessor ka kaam 
+        if(node.data == data && pair.pred == null) pair.pred = prev;
+        //successor ka kaam kese krein yeh dekhte hai..
+        if(pair.prev != null && pair.prev.data == data && pair.succ == null) pair.succ = node;
+        pair.prev = node;
+
+        inorderSuccessor_Predecessor(node.right, data,pair);
+    }
+
     
 
     public static void view(Node root){
@@ -733,16 +761,20 @@ public class l001{
         System.out.println("lca :" + LCA.data);
     }
 
-   public static void solve(){
+    public static void solve(){
        int[] arr={10,20,40,-1,-1,50,80,-1,-1,90,-1,-1,30,60,100,-1,-1,-1,70,110,-1,-1,120,-1,-1};
-    //    int[] arr = {11,6,4,-1,5,-1,-1,8,-1,10,-1,-1,19,17,-1,-1,43,31,-1,-1,49,-1,-1};
-    //    int[] arr={10,20};
+        //    int[] arr = {11,6,4,-1,5,-1,-1,8,-1,10,-1,-1,19,17,-1,-1,43,31,-1,-1,49,-1,-1};
+        //    int[] arr={10,20};
        Node root=constructTree(arr);
        display(root);
         // levelOrder(root);
         // view(root);
         // set2(root);
-        inorderSuccessor_Predecessor(root,50);
+        allSolution pair = new allSolution();
+        allSol(root,50,0,pair);
+        if(pair.pred != null) System.out.println(pair.pred.data);
+        if(pair.succ != null) System.out.println(pair.succ.data);
+        preOrder(root);
         // set1(root, 100);
-   }
+    }
 }
