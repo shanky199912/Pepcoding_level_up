@@ -3,5 +3,7 @@
         "iostream": "cpp",
         "vector": "cpp",
         "ostream": "cpp"
-    }
+    },
+    "java.configuration.maven.userSettings": "",
+    "java.import.gradle.user.home": ""
 }

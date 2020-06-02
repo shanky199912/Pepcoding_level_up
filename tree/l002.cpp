@@ -1,6 +1,5 @@
 #include<iostream>
 #include<vector>
-#include<algorithm>
 
 using namespace std;
 
@@ -15,7 +14,6 @@ class Node{
         }
 
         Node(){
-
         }
 };
 
@@ -110,23 +108,46 @@ void nodesinrange(Node* node, int a, int b, vector<int>& arr){
 Node* predess = nullptr;
 Node* success = nullptr;
 void inorderSuccessor_Predecessor(Node* node, int data){
-    if(node == nullptr){
-        return;
+    Node *curr = node;
+    Node *pred = nullptr;
+    Node *succ = nullptr;
+    while (curr != nullptr)
+    {
+        if (curr->data == data)
+        {
+            if (curr->left == nullptr)
+                cout << "Pred: " << (pred != nullptr ? pred->data : -1) << endl;
+            else
+            {
+                pred = curr->left;
+                while (pred->right != nullptr)
+                    pred = pred->right;
+                cout << "Pred: " << pred->data << endl;
+            }
+
+            if (curr->right == nullptr)
+                cout << "Succ: " << (succ != nullptr ? succ->data : -1) << endl;
+            else
+            {
+                succ = curr->right;
+                while (succ->left != nullptr)
+                    succ = succ->left;
+                cout << "Succ: " << succ->data << endl;
+            }
+
+            break;
+        }
+        else if (data < curr->data)
+        {
+            succ = curr;
+            curr = curr->left;
+        }
+        else
+        {
+            pred = curr;
+            curr = curr->right;
+        }
     }
-
-        inorderSuccessor_Predecessor(node->left, data);
-        if(predess != nullptr && predess->data == data){
-            success = node;
-            cout<<success->data;
-        }
-        if(node->data == data){
-            cout<<predess->data;
-            predess = node;
-        }else{
-            predess = node;
-        }
-
-        inorderSuccessor_Predecessor(node->right, data);
 }
 
 int idx = 0;
@@ -141,18 +162,6 @@ Node* constructBstFromPreOrderTraversal_(vector<int>& arr, int lb, int ele, int 
 
     return node;
 }
-
-// Node* constructBstFromPreOrderTraversal_02(vector<int>& arr, int lb, int rb){
-//     if(arr[idx] > rb || arr[idx] < lb || idx == arr.size()) return nullptr;
-
-//     Node* node = new Node(arr[idx]);
-//     idx++;
-
-//     if(idx < arr.size()) node->left = constructBstFromPreOrderTraversal_02(arr, lb, node->data, ele);
-//     if(idx < arr.size()) node->right = constructBstFromPreOrderTraversal_02(arr, ele, node->data, rb);
-
-//     return node;
-// }
 
 int heightOfBstFromPreOrder(vector<int>& arr, int lb, int rb){
     if(arr[idx] > rb || arr[idx] < lb || idx == arr.size()) return -1;
@@ -175,6 +184,63 @@ Node* constructBstFromPreOrderTraversal(){
     return root;
 }
 
+Node* addData(Node* root, int data){
+    if(root == nullptr) return new Node(data);
+
+    if(data > root->data){
+        root->right = addData(root->right, data);
+    }
+    else{
+        root->left = addData(root->left, data);
+    } 
+    return root;
+}
+
+Node* addDataItr(Node* root, int data){
+    if(root == nullptr) return new Node(data);
+
+    Node *curr = root;
+    Node* prev = nullptr;
+    while(curr != nullptr){
+        prev = curr;
+        if(curr->data < data){
+            curr = curr->right;
+        }
+        else{
+            curr = curr->left;
+        }
+    }
+    if(prev->data > data) {
+        prev->left = new Node(data);
+    }
+    else{
+        prev->right = new Node(data);
+    }
+    return root;
+}
+
+Node* remove(Node* root, int data){ //O(log(n))
+    if(root == nullptr) return nullptr;
+
+    if(data > root->data){
+        root->right = remove(root->right, data);
+    }
+    else if(data < root->data){
+        root->left = remove(root->left, data);
+    }
+    else{
+        //data mil gya mujhe
+        if(root->left == nullptr || root->right == nullptr){ //only one node, node has only left, node has only right.
+            return (root->left !=nullptr? root->left : root->right);
+        }
+
+        //node has both left and right -> replace node->data with max of lst or min of rst.
+        int maxEle = maximum(root->left);
+        root->data = maxEle;
+        root->left = remove(root->left, maxEle);
+    }
+    return root;
+}
 
 void set1(Node* node){
     vector<int> ans;

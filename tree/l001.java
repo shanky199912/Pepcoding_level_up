@@ -725,7 +725,7 @@ public class l001{
         inorderSuccessor_Predecessor(node.left, data, pair);
         //here we will do our work -> kyunki inorder pucha tha issliye.
         //predecessor ka kaam 
-        if(node.data == data && pair.pred == null) pair.pred = prev;
+        if(node.data == data && pair.pred == null) pair.pred = pair.prev;
         //successor ka kaam kese krein yeh dekhte hai..
         if(pair.prev != null && pair.prev.data == data && pair.succ == null) pair.succ = node;
         pair.prev = node;
