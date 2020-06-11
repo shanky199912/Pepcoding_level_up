@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class questions{
     
@@ -272,5 +273,34 @@ public class questions{
         }
 
         return ans;
+    }
+
+    //Leetcode -173
+    class BSTIterator {
+
+        Stack<TreeNode> st;
+        public BSTIterator(TreeNode root) {
+            st = new Stack<>();
+            addAll_left_of_Right(root);
+        }
+        
+        public void addAll_left_of_Right(TreeNode node){
+            while(node != null){
+                st.push(node);
+                node = node.left;
+            }
+        }
+        
+        /** @return the next smallest number */
+        public int next() {
+            TreeNode rnode = st.pop();
+            addAll_left_of_Right(rnode.right);
+            return rnode.val;
+        }
+        
+        /** @return whether we have a next smallest number */
+        public boolean hasNext() {
+            return st.size() != 0;
+        }
     }
 }

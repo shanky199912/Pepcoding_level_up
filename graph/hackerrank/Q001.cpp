@@ -37,22 +37,24 @@ bool callBFS(int src, vector<int>& vis, vector<pair<vector<int>,vector<int>>>& g
 void solveCovid19(){
     int n;
     cin >> n;
-    int t = 0;
     vector<pair<vector<int>,vector<int>>> graph(n, pair<vector<int>,vector<int>>());
     
-    while(t++ < n){
+    for(int t=0; t<n; t++){
         int p, q;
         int u, v;
         cin >> p >> q;
+
+        graph[t].first.resize(p,-1);
+        graph[t].second.resize(q,-1);
         
         for(int j=0; j<p; j++){
             cin >> u;
-            graph[t].first.push_back(u);
+            graph[t].first[j] = u;
         }
         
         for(int k=0; k<q; k++){
             cin >> v;
-            graph[t].second.push_back(v);
+            graph[t].second[k] = v;
         }
     }
     
@@ -64,13 +66,13 @@ void solveCovid19(){
             bool res = callBFS(i, vis, graph);
             
             if(res == false){
-               cout << res << endl;
+               cout << std::boolalpha << res << endl;
                return;
             }
         }
     }
     
-    cout << true <<endl;
+    cout << std::boolalpha << true <<endl;
     return;
 }
 
