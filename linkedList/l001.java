@@ -64,24 +64,26 @@ public class l001 {
         }
 
         private void addAtNode(Node node, int pos) {
-            Node curr = this.head;
-            while (pos-- > 1) {
-                curr = curr.next;
-            }
+            if (pos == 0) {
+                addFirstNode(node);
+            } else if (pos == this.size) {
+                addLastNode(node);
+            } else {
+                Node prevNode = getNodeAt(pos - 1);
+                Node temp = prevNode.next;
+                prevNode.next = node;
+                node.next = temp;
 
-            node.next = curr.next;
-            curr.next = node;
+                this.size++;
+            }
         }
 
         public void addAt(int data, int pos) {
-            if (this.size == 0 || pos == 0) {
-                addFirst(data);
-            } else if (pos == this.size() - 1) {
-                addLast(data);
-            } else {
-                Node node = new Node(data);
-                addAtNode(node, pos);
-            }
+            if (pos < 0 || pos > this.size)
+                return;
+
+            Node node = new Node(data);
+            addAtNode(node, pos);
         }
 
         public int removeFirst() {
@@ -122,7 +124,20 @@ public class l001 {
         }
 
         public int removeAt(int pos) {
-            return 0;
+            if(pos < 0 || pos >= this.size()){ System.out.println("Invalid pos"); return -1;}
+            else if(pos == 0) return removeFirst();
+            else if(pos == this.size()-1) return removeLast();
+            else{
+                Node prevNode = getNodeAt(pos-1);
+                Node rnode = prevNode.next;
+                Node temp = rnode.next;
+
+                prevNode.next = temp;
+                rnode.next = null;
+
+                this.size--;
+                return rnode.data;
+            }
         }
 
         public int getFirst() {
@@ -169,6 +184,9 @@ public class l001 {
             ll.addLast(i * 10);
         }
         ll.addAt(120, 5);
+        ll.addAt(150, 3);
+        System.out.println(ll);
+        System.out.println(ll.removeAt(3));
         System.out.println(ll);
     }
 }

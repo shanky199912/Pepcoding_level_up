@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
@@ -302,5 +303,95 @@ public class questions{
         public boolean hasNext() {
             return st.size() != 0;
         }
+    }
+
+    //Leetcode - 662 - width of binary tree
+    public class pairVO{
+        TreeNode node = null;
+        int idx = 0;
+
+        public pairVO(TreeNode node, int idx){
+            this.node = node;
+            this.idx = idx; 
+        }
+    }
+
+    public int widthOfBinaryTree(TreeNode root) {
+        if(root == null) return 0;
+
+        LinkedList<pairVO> que = new LinkedList<>();
+        que.addLast(new pairVO(root, 0));
+
+        int maxWidth = 0;
+        while(que.size() != 0){
+            int size = que.size();
+            pairVO head = que.getFirst();
+            pairVO rnode = null;
+            while(size-- >0){
+                rnode = que.removeFirst();
+
+                if(rnode.node.left != null) que.addLast(new pairVO(rnode.node.left, 2* rnode.idx));
+                if(rnode.node.right != null) que.addLast(new pairVO(rnode.node.right, 2*rnode.idx + 1));
+            }
+
+            maxWidth = Math.max(maxWidth , (rnode.idx - head.idx)+1);
+        }
+
+        return maxWidth;
+    }
+
+    //Leetcode - 655 - print binary tree
+    public class ppair{
+        TreeNode node = null;
+        int first;
+        int last;
+
+        public ppair(TreeNode node, int first, int last){
+            this.first = first;
+            this.node = node;
+            this.last = last;
+        }
+    }
+
+    public int height(TreeNode root){
+        if(root == null) return -1;
+        return Math.max(height(root.left), height(root.right))+ 1;
+    }
+
+    public List<List<String>> printTree(TreeNode root) {
+        List<List<String>> ans = new ArrayList<>();
+        if(root == null) return ans;
+
+        int h = height(root);
+        int n = (int)(Math.pow(2, h+1) - 1);
+
+        LinkedList<ppair> que = new LinkedList<>();
+        que.addLast(new ppair(root, 0, n));
+
+        while(que.size() != 0){
+            int size = que.size();
+            List<String> res = new ArrayList<>();
+            for(int i=0; i<n; i++){
+                res.add("");
+            }
+            while(size-- >0){
+                ppair rnode = que.removeFirst();
+                
+                int mid = (rnode.first + rnode.last)/2;
+                String value = Integer.toString(rnode.node.val);
+                res.set(mid, value);
+
+                if(rnode.node.left != null){
+                    que.addLast(new ppair(rnode.node.left, rnode.first, mid));
+                }
+                if(rnode.node.right != null){
+                    que.addLast(new ppair(rnode.node.right, mid+1, rnode.last));
+                }
+            }
+
+            ans.add(res);
+        }
+
+        return ans;
     }
 }
