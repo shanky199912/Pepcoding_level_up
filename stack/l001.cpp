@@ -92,17 +92,84 @@ void solve()
 }
 
 // Class Questions ->
-vector<int> nextGreater(vector<int> arr)
+vector<int> nextGreaterFromLeftToRight(vector<int>& arr) //O(n) approach
 {
     stack<int> st;
     int n = arr.size();
+    vector<int> ans(n, n);
     for (int i = 0; i < n; i++)
     {
+        while(st.size() != 0 && arr[st.top()] < arr[i]){
+            ans[st.top()] = i;
+            st.pop();
+        }
+
+        st.push(i);
     }
+
+    return ans;
+}
+
+vector<int> nextGreaterFromRightToLeft(vector<int>& arr) //O(n) approach
+{
+    stack<int> st;
+    int n = arr.size();
+    vector<int> ans(n, -1);
+    for (int i = n-1; i >= 0; i--)
+    {
+        while(st.size() != 0 && arr[st.top()] < arr[i]){
+            ans[st.top()] = i;
+            st.pop();
+        }
+
+        st.push(i);
+    }
+
+    return ans;
+}
+
+vector<int> nextSmallerFromLeftToRight(vector<int>& arr) //O(n) approach
+{
+    stack<int> st;
+    int n = arr.size();
+    vector<int> ans(n, n);
+    for (int i = 0; i < n; i++)
+    {
+        while(st.size() != 0 && arr[st.top()] > arr[i]){
+            ans[st.top()] = i;
+            st.pop();
+        }
+
+        st.push(i);
+    }
+
+    return ans;
+}
+
+vector<int> nextSmallerFromRightToLeft(vector<int>& arr) //O(n) approach
+{
+    stack<int> st;
+    int n = arr.size();
+    vector<int> ans(n, -1);
+    for (int i = n-1; i >= 0; i--)
+    {
+        while(st.size() != 0 && arr[st.top()] > arr[i]){
+            ans[st.top()] = i;
+            st.pop();
+        }
+
+        st.push(i);
+    }
+
+    return ans;
 }
 
 void set1()
 {
+    vector<int> arr = {2,-1,8,6,9,4,3,5};
+    vector<int> ans = nextSmallerFromRightToLeft(arr);
+    for(int ele: ans) cout << ele << " ";
+    cout << endl;
 }
 
 int main()
