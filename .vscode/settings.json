@@ -47,5 +47,6 @@
         "typeinfo": "cpp"
     },
     "java.configuration.maven.userSettings": "",
-    "java.import.gradle.user.home": ""
+    "java.import.gradle.user.home": "",
+    "C_Cpp.errorSquiggles": "Disabled"
 }

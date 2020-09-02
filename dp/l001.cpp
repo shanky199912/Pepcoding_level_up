@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <algorithm>
+#include <cmath>
+#include <cstring>
 
 using namespace std;
 
@@ -562,11 +565,12 @@ int countWaysToPartition_into_k_subsets_rec(int n, int k, vector<vector<int>> &d
     return dp[n][k] = totalWays;
 }
 
-void partition_set_into_k_subsets(){
+void partition_set_into_k_subsets()
+{
 
     int n = 5;
-    int k =3;
-    vector<vector<int>> dp(n+1, vector<int>(k+1, 0));
+    int k = 3;
+    vector<vector<int>> dp(n + 1, vector<int>(k + 1, 0));
     cout << countWaysToPartition_into_k_subsets_rec(n, k, dp) << endl;
 
     display2D(dp);
@@ -940,7 +944,76 @@ int maxDotProduct(vector<int> &nums1, vector<int> &nums2)
 // https://www.geeksforgeeks.org/find-number-of-solutions-of-a-linear-equation-of-n-variables/
 
 //Leetcode - 322 Coin change ==============================================
-//Todo int coinChange(vector<int> &coins, int amount)
+int coinchange_(vector<int> &coins, int amt, int idx, vector<vector<int>> &dp)
+{
+    if (amt == 0)
+    {
+        return dp[idx][amt] = 0;
+    }
+
+    if (dp[idx][amt] != 0)
+        return dp[idx][amt];
+
+    int minCoin = (int)1e9;
+    for (int i = idx; i < coins.size(); i++)
+    {
+
+        if (amt - coins[i] >= 0)
+        {
+            int count = coinchange_(coins, amt - coins[i], i, dp) + 1;
+
+            if (count < minCoin)
+                minCoin = count;
+        }
+    }
+
+    return dp[idx][amt] = minCoin;
+}
+
+int coinchange_dp(vector<int> &coins, int amount, vector<vector<int>> &dp)
+{
+    for (int amt = 0; amt <= amount; amt++)
+    {
+        for (int idx = 0; idx < coins.size(); idx++)
+        {
+            if (amt == 0)
+            {
+                dp[idx][amt] = 0;
+                continue;
+            }
+
+            int minCoin = (int)1e9;
+            for (int i = idx; i < coins.size(); i++)
+            {
+
+                if (amt - coins[i] >= 0)
+                {
+                    int count = dp[idx][amt - coins[i]] + 1;
+                    if (count < minCoin)
+                        minCoin = count;
+                }
+            }
+
+            dp[idx][amt] = minCoin;
+        }
+    }
+
+    return dp[0][amount];
+}
+
+int coinChange(vector<int> &coins, int amount)
+{
+    if (amount < 1)
+        return 0;
+
+    int n = coins.size();
+    vector<vector<int>> dp(n + 1, vector<int>(amount + 1, 0));
+    int ans = coinchange_dp(coins, amount, dp);
+    if (ans == 1e9)
+        return -1;
+
+    return ans;
+}
 
 int targetSum_(vector<int> &coins, int tar, int idx, vector<vector<int>> &dp)
 {
@@ -991,38 +1064,51 @@ void targetSum()
     vector<int> coins = {2, 3, 5, 7};
     int tar = 10;
     vector<vector<int>> dp(coins.size() + 1, vector<int>(tar + 1, 0));
-    // cout<<targetSum_(coins,tar,0,dp)<<endl;
-    cout << targetSum_02(coins, tar, coins.size(), dp) << endl;
+    cout << targetSum_(coins, tar, 0, dp) << endl;
+    // cout << targetSum_02(coins, tar, coins.size(), dp) << endl;
 
     display2D(dp);
 }
 
-int knapsack_01(vector<int> &wt, vector<int> &arr, int W, vector<vector<int>> &dp)
+int knapsack_01(vector<int> &wt, vector<int> val, int W, int idx, vector<vector<int>> &dp)
 {
-    int Tar = W;
 
-    for (int idx = 0; idx < arr.size(); idx++)
+    if (W == 0 || idx == 0)
     {
-        for (int tar = 0; tar <= Tar; tar++)
-        {
-            if (idx == 0 || tar == 0)
-            {
-                continue;
-            }
-
-            int maxProfit = -1e8;
-            if (tar - wt[idx - 1] >= 0)
-            {
-                maxProfit = max(maxProfit, dp[idx - 1][tar - wt[idx - 1]] + arr[idx - 1]);
-            }
-
-            maxProfit = max(maxProfit, dp[idx - 1][tar]);
-            dp[idx][tar] = maxProfit;
-        }
+        return 0;
     }
 
-    return dp[arr.size()][W];
+    if (W - wt[idx - 1] >= 0)
+    {
+    }
 }
+
+// int knapsack_01(vector<int> &wt, vector<int> &arr, int W, vector<vector<int>> &dp)
+// {
+//     int Tar = W;
+
+//     for (int idx = 0; idx < arr.size(); idx++)
+//     {
+//         for (int tar = 0; tar <= Tar; tar++)
+//         {
+//             if (idx == 0 || tar == 0)
+//             {
+//                 continue;
+//             }
+
+//             int maxProfit = -1e8;
+//             if (tar - wt[idx - 1] >= 0)
+//             {
+//                 maxProfit = max(maxProfit, dp[idx - 1][tar - wt[idx - 1]] + arr[idx - 1]);
+//             }
+
+//             maxProfit = max(maxProfit, dp[idx - 1][tar]);
+//             dp[idx][tar] = maxProfit;
+//         }
+//     }
+
+//     return dp[arr.size()][W];
+// }
 
 //Todo int unboundedKnapsack()
 
@@ -1032,7 +1118,7 @@ void knapsack()
     vector<int> wt = {10, 20, 30};
     int W = 50;
     vector<vector<int>> dp(wt.size() + 1, vector<int>(W + 1, 0));
-    cout << knapsack_01(wt, arr, W, dp) << endl;
+    // cout << knapsack_01(wt, arr, W, dp) << endl;
 
     display2D(dp);
 }
@@ -1244,6 +1330,83 @@ int countLIS(vector<int> &arr)
     return maxCount;
 }
 
+//* Leetcode - 91 Decode ways ====================================
+int numDecodings_(string &s, int vidx, vector<int> &dp)
+{
+
+    if (vidx == s.length())
+        return dp[vidx] = 1;
+
+    if (dp[vidx] != -1)
+    {
+        return dp[vidx];
+    }
+
+    char ch = s[vidx];
+    if (ch == '0')
+    {
+        return dp[vidx] = 0;
+    }
+
+    int count = 0;
+    count += numDecodings_(s, vidx + 1, dp);
+
+    if (vidx + 1 < s.length())
+    {
+
+        int num = (ch - '0') * 10 + (s[vidx + 1] - '0');
+        if (num <= 26)
+        {
+            count += numDecodings_(s, vidx + 2, dp);
+        }
+    }
+
+    return dp[vidx] = count;
+}
+
+int numDecodings(string s)
+{
+
+    vector<int> dp(s.length() + 1, -1);
+    return numDecodings_(s, 0, dp);
+}
+
+//* https://practice.geeksforgeeks.org/problems/count-subsequences-of-type-ai-bj-ck/0
+
+// int count_subsequences(string &s, vector<int> &dp)
+// {
+
+//     int acount = 0;
+//     int bcount = 0;
+//     int ccount = 0;
+// }
+
+//*Leetcode - Distinct subsequences - 2 ==================================
+// int distinctSubseqII(string str)
+// {
+
+//     str = "$" + str;
+//     int n = str.length();
+//     vector<int> dp(n, 0);
+//     vector<int> lastOcurr(26, -1);
+
+//     for (int i = 0; i < n; i++)
+//     {
+
+//         if (i == 0)
+//         {
+//             dp[i] = 1;
+//             continue;
+//         }
+
+//     }
+// }
+
+//*Leetcode - 639 =========================================================
+// int numDecodings(string s)
+// {
+// }
+
 void LIS()
 {
     // vector<int> arr = {0, 8, 4, 12, 2, 10, 6, 14, 1, 9, 5, 13, 3, 11, 7, 15, 8};
@@ -1369,15 +1532,124 @@ void mcm_dp_Path(vector<int> &arr)
     cout << sdp[0][arr.size() - 1] << endl;
 }
 
+//* Leetcode - 132 Pallindrome Partitioning -2 =====================================
+int dp1[1600][1600];
+bool isPalin(string &s, int i, int j)
+{
+    if (i >= j)
+        return true;
+    if (dp1[i][j] != -1)
+        return dp1[i][j];
+    if (s[i] == s[j])
+        return dp1[i][j] = isPalin(s, i + 1, j - 1);
+    return dp1[i][j] = false;
+}
+
+int minPallindromicCut(string &s, int si, int ei, vector<vector<int>> &dp)
+{
+
+    if (si >= ei)
+        return dp[si][ei] = 0;
+
+    if (dp[si][ei] != -1)
+        return dp[si][ei];
+
+    if (isPalin(s, si, ei))
+        return dp[si][ei] = 0;
+
+    int minCut = (int)1e9;
+    for (int cut = si + 1; cut <= ei; cut++)
+    {
+
+        int left;
+        int right;
+
+        if (dp[si][cut - 1] != -1)
+            left = dp[si][cut - 1];
+        else
+        {
+            left = minPallindromicCut(s, si, cut - 1, dp);
+            dp[si][cut - 1] = left;
+        }
+
+        if (dp[cut][ei] != -1)
+            right = dp[cut][ei];
+        else
+        {
+            right = minPallindromicCut(s, cut, ei, dp);
+            dp[cut][ei] = right;
+        }
+
+        int total = left + 1 + right;
+        if (total < minCut)
+            minCut = total;
+    }
+
+    return dp[si][ei] = minCut;
+}
+
+int minPallindromicCut_dp(string &s, vector<vector<int>> &dp)
+{
+    int n = s.length();
+    for (int gap = 0; gap < n; gap++)
+    {
+        for (int si = 0, ei = gap; ei < n; si++, ei++)
+        {
+            if (gap == 0)
+            {
+                dp[si][ei] = 0;
+                continue;
+            }
+            else if (gap == 1 && s[si] == s[ei])
+            {
+                dp[si][ei] = 0;
+            }
+            else if (s[si] == s[ei] && dp[si + 1][ei - 1] == 0)
+            {
+                dp[si][ei] = 0;
+            }
+            else
+            {
+                int minCut = (int)1e9;
+                for (int cut = si + 1; cut <= ei; cut++)
+                {
+                    int left = dp[si][cut-1]; //minPallindromicCut(s, si, cut - 1, dp);
+
+                    int right = dp[cut][ei]; //minPallindromicCut(s, cut, ei, dp);
+
+                    int total = left + 1 + right;
+                    if (total < minCut)
+                        minCut = total;
+                }
+
+                dp[si][ei] = minCut;
+            }
+        }
+    }
+
+    return dp[0][n-1];
+}
+
+int minCut()
+{
+
+    string s = "abccbc";
+    int n = s.length();
+    vector<vector<int>> dp(n, vector<int>(n, -1));
+    // memset(dp1, -1, sizeof dp1);
+    cout << minPallindromicCut_dp(s, dp) << endl;
+    display2D(dp);
+}
+
 void cutSet()
 {
-    vector<int> arr = {2, 3, 4, 5, 6, 7};
-    //? vector<int> arr = {470, 36, 153, 122, 394 ,291, 290, 110 ,132, 174 ,265, 236, 49, 296, 378, 314, 334 ,199 ,450 ,356, 156, 294, 469, 157, 461, 434, 324, 287, 172, 359 ,178, 141, 246, 182, 262, 491, 324, 51 ,101, 455};
-    int n = arr.size();
-    vector<vector<int>> dp(n, vector<int>(n, -1));
-    cout << mcm_dp(arr, 0, n - 1, dp) << endl;
-    mcm_dp_Path(arr);
-    // display2D(dp);
+    minCut();
+    // vector<int> arr = {2, 3, 4, 5, 6, 7};
+    // //? vector<int> arr = {470, 36, 153, 122, 394 ,291, 290, 110 ,132, 174 ,265, 236, 49, 296, 378, 314, 334 ,199 ,450 ,356, 156, 294, 469, 157, 461, 434, 324, 287, 172, 359 ,178, 141, 246, 182, 262, 491, 324, 51 ,101, 455};
+    // int n = arr.size();
+    // vector<vector<int>> dp(n, vector<int>(n, -1));
+    // cout << mcm_dp(arr, 0, n - 1, dp) << endl;
+    // mcm_dp_Path(arr);
 }
 
 //* https://practice.geeksforgeeks.org/problems/optimal-binary-search-tree/0
@@ -1465,8 +1737,8 @@ void solve()
     // targetSum();
     // knapsack();
     // LIS();
-    // cutSet();
-    partition_set_into_k_subsets();
+    cutSet();
+    // partition_set_into_k_subsets();
 }
 
 int main()
